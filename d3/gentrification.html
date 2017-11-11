@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Arcs</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">    
+    <link rel="stylesheet" href="css/viz.css">
+  </head>
+  <body>
+    <div id="master">
+      <div id="sections">
+        <section class="step">
+          <h1>How can we measure gentrification?</h1>
+          <p>
+            Gentrification can be a somewhat nebulous concept, but for the sake of consistency, we use the following methodology, from <a href="http://www.governing.com/gov-data/gentrification-report-methodology.html">governing.com</a>, to provide a specific definition.
+          </p>
+        </section>
+        <section class="step">
+          To be eligible for gentrification, a tract's median income in 2000 must be below the 40th percentile.
+        </section>
+        <section class="step">
+          This tract has a starting income below the threshold, so it is eligible.
+        </section>
+        <section class="step">
+          Over 10 years, the median income rises considerably, but income change can be lagged, so it is not used as an indicator of gentrification.
+        </section>
+        <section class="step">
+          To be considered gentrified, a tract must show significant growth in median home value (adjusted for inflation). In this tract, the median value is relatively low, leaving room to grow.
+        </section>
+        <section class="step">
+          This line shows the minimum home value growth required for gentrification, which must be in the top third of growth rates in the city.
+        </section>
+        <section class="step">
+          This tract shows greater growth, so it meets this criterion.
+        </section>
+        <section class="step">
+          Finally, growth in educational attainment (number of four-year degrees) is used as a predictor of future income growth.
+        </section>
+        <section class="step">
+          As with income, educational attainment growth rates must be in the top third percentile in the area.
+        </section>
+        <section class="step">
+          Since educational attainment also comes in above the necessary growth rate, the tract is considered gentrified.
+        </section>
+      </div>
+      <div id="lineviz">
+      </div>
+    </div>
+    <script src="http://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/d3-color.v1.min.js"></script>
+    <script src="https://d3js.org/d3-dispatch.v1.min.js"></script>
+    <script src="https://d3js.org/d3-ease.v1.min.js"></script>
+    <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+    <script src="https://d3js.org/d3-selection.v1.min.js"></script>
+    <script src="https://d3js.org/d3-timer.v1.min.js"></script>
+    <script src="https://d3js.org/d3-transition.v1.min.js"></script> 
+    <script src="js/scroller.js"></script>
+    <script src="js/gentrification.js"></script>
+  </body>
+</html>

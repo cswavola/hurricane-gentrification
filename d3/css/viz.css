@@ -1,0 +1,38 @@
+#summaryText {
+	display: none;
+}
+
+.outlined {
+	stroke-width: 2px;
+	stroke: "black";
+}
+
+#viz {
+	float:left;
+}
+
+#detail {
+	float: left;
+	display: none;
+}
+
+#sections {
+	width: 500px;
+	margin-bottom: 500px;
+	margin-left: 20px;
+}
+
+.step {
+	margin-top: 200px;
+}
+
+
+#lineviz {
+	position: fixed;
+	left: 600px;
+	top: 0px;
+}
+
+path.domain, g.tick line {
+	opacity: 0;
+}
