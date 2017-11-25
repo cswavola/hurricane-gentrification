@@ -13,7 +13,7 @@
 
 #detail {
 	float: left;
-	display: none;
+	display: block;
 }
 
 #sections {

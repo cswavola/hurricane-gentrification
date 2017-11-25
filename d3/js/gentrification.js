@@ -115,13 +115,17 @@ var lineViz = function() {
 			.style("fill", colors.home_value)
 			.style("opacity", 0);
 
+		console.log(tract.med_home_value_ref_pctile);
+		console.log(tract.pct_college_ref_pctile);
+
 		svg.append("line")
 			.attr("id", "hvThresh")
 			.attr("class", "step5")
 			.attr("x1", x(2000))
 			.attr("y1", y(tract.med_home_value_00_pctile))
 			.attr("x2", x(2010))
-			.attr("y2", y(tract.med_home_value_10_pctile-10))
+			//.attr("y2", y(tract.med_home_value_10_pctile-10))
+			.attr("y2", y(tract.med_home_value_ref_pctile))
 			.style("stroke-width", 3)
 			.style("stroke", colors.home_value)
 			.style("stroke-dasharray", ("3, 3"))
@@ -163,7 +167,8 @@ var lineViz = function() {
 			.attr("x1", x(2000))
 			.attr("y1", y(tract.pct_college_00_pctile))
 			.attr("x2", x(2010))
-			.attr("y2", y(tract.pct_college_10_pctile-10))
+			//.attr("y2", y(tract.pct_college_10_pctile-10))
+			.attr("y2", y(tract.pct_college_ref_pctile))
 			.style("stroke-width", 3)
 			.style("stroke", colors.college)
 			.style("stroke-dasharray", ("3, 3"))
@@ -382,7 +387,8 @@ var lineViz = function() {
 };
 
 function display(data) {
-	var tract = data.filter(function(d) { return d.gentrified; })[0];
+	//var tract = data.filter(function(d) { return d.gentrified; })[0];
+	var tract = data.filter(function(d) { return !d.gentrified; })[0];
 
 	var plot = lineViz();
 	d3.select("#lineviz")
@@ -440,6 +446,9 @@ var rowConverter = function(d) {
 	d.population_change_pctile = parseInt(d.population_change_pctile);
 
 	d.pct_damage = parseFloat(d.pct_damage);
+
+	d.pct_college_ref_pctile = parseInt(d.pct_college_ref_pctile)
+	d.med_home_value_ref_pctile = parseInt(d.med_home_value_ref_pctile)
 
 	if(d.med_income_00_pctile <= 33) {
 		d.income_group = "low";

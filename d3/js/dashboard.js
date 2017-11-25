@@ -1,3 +1,217 @@
+var gentrificationLines = function() {
+	var height = 600;
+	var width = 400;
+	var margin = {top: 20, right: 20, bottom: 20, left: 40};
+	var pointRad = 5;
+	var svg = null;
+	var g = null;
+
+	var figh = height-margin.top-margin.bottom;
+	var figw = width-margin.left-margin.right;
+
+	var colors = {"income": "green", "home_value": "magenta", "college": "orange"};
+
+	// Keep track of which visualization
+	// we are on and which was the last
+	// index activated. When user scrolls
+	// quickly, we want to call all the
+	// activate functions that they pass.
+	var lastIndex = -1;
+	var activeIndex = 0;
+
+	var activateFunctions = [];
+
+
+	var x = d3.scaleOrdinal()
+		.range([margin.left, margin.left+figw])
+		.domain([2000, 2010]);
+	var y = d3.scaleLinear()
+		.range([margin.top+figh, margin.top])
+		.domain([0, 100]);
+
+	var xAxis = d3.axisBottom()
+		.scale(x);
+	var yAxis = d3.axisLeft()
+		.scale(y)
+		.ticks(5);
+
+	var tract = {};
+	var tract_ = function(_) {
+		var that = this;
+		if(!arguments.length) return tract;
+		tract = _;
+		return that;
+	}
+
+	// var chart = function(selection) {
+	// 	selection.each(function(tract) {
+	// 		console.log(tract);
+	// 		svg = d3.select(this).selectAll("svg")
+	// 			.data([tract]);
+
+	// 		var svge = svg.enter().append("svg");
+	// 		svg = svg.merge(svge)
+
+	// 		svg
+	// 			.attr("width", width)
+	// 			.attr("height", height);
+	// 		svg.append("g");
+	// 		setupVis(tract);
+	// 	});
+	// };
+
+	var plot_ = function() {
+		console.log(tract);
+		d3.select("#detail").selectAll("svg").remove();
+
+		svg = d3.select("#detail").append("svg")
+			.attr("height", height)
+			.attr("width", width);
+
+		svg.append("line")
+			.attr("id", "incThresh")
+			.attr("class", "step1")
+			.attr("x1", x(2000))
+			.attr("y1", y(40))
+			.attr("x2", x(2010))
+			.attr("y2", y(40))
+			.style("stroke-width", 2)
+			.style("stroke", colors.income)
+			.style("stroke-dasharray", ("3, 3"))
+			.style("opacity", 0.5);
+
+		svg.append("circle")
+			.attr("id", "inc2000")
+			.attr("class", "step2")
+			.attr("cx", x(2000))
+			.attr("cy", y(tract.med_income_00_pctile))
+			.attr("r", pointRad)
+			.style("fill", colors.income)
+			.style("opacity", 1);
+
+		svg.append("circle")
+			.attr("id", "inc2010")
+			.attr("class", "step3")
+			.attr("cx", x(2010))
+			.attr("cy", y(tract.med_income_10_pctile))
+			.attr("r", pointRad)
+			.style("fill", colors.income)
+			.style("opacity", 1);
+
+		svg.append("line")
+			.attr("id", "incLine")
+			.attr("class", "step3")
+			.attr("x1", x(2000))
+			.attr("y1", y(tract.med_income_00_pctile))
+			.attr("x2", x(2010))
+			.attr("y2", y(tract.med_income_10_pctile))
+			.style("stroke-width", 3)
+			.style("stroke", colors.income)
+			.style("opacity", 1);
+
+		svg.append("circle")
+			.attr("id", "hv2000")
+			.attr("class", "step4")
+			.attr("cx", x(2000))
+			.attr("cy", y(tract.med_home_value_00_pctile))
+			.attr("r", pointRad)
+			.style("fill", colors.home_value)
+			.style("opacity", 1);
+
+		svg.append("line")
+			.attr("id", "hvThresh")
+			.attr("class", "step5")
+			.attr("x1", x(2000))
+			.attr("y1", y(tract.med_home_value_00_pctile))
+			.attr("x2", x(2010))
+			.attr("y2", y(tract.med_home_value_ref_pctile))
+			.style("stroke-width", 3)
+			.style("stroke", colors.home_value)
+			.style("stroke-dasharray", ("3, 3"))
+			.style("opacity", 0.5);
+
+		svg.append("circle")
+			.attr("id", "hv2010")
+			.attr("class", "step6")
+			.attr("cx", x(2010))
+			.attr("cy", y(tract.med_home_value_10_pctile))
+			.attr("r", pointRad)
+			.style("fill", colors.home_value)
+			.style("opacity", 1);
+
+		svg.append("line")
+			.attr("id", "hvLine")
+			.attr("class", "step6")
+			.attr("x1", x(2000))
+			.attr("y1", y(tract.med_home_value_00_pctile))
+			.attr("x2", x(2010))
+			.attr("y2", y(tract.med_home_value_10_pctile))
+			.style("stroke-width", 3)
+			.style("stroke", colors.home_value)
+			.style("opacity", 1);
+
+
+		svg.append("circle")
+			.attr("id", "college2000")
+			.attr("class", "step7")
+			.attr("cx", x(2000))
+			.attr("cy", y(tract.pct_college_00_pctile))
+			.attr("r", pointRad)
+			.style("fill", colors.college)
+			.style("opacity", 1);
+
+		svg.append("line")
+			.attr("id", "collegeThresh")
+			.attr("class", "step8")
+			.attr("x1", x(2000))
+			.attr("y1", y(tract.pct_college_00_pctile))
+			.attr("x2", x(2010))
+			.attr("y2", y(tract.pct_college_ref_pctile))
+			.style("stroke-width", 3)
+			.style("stroke", colors.college)
+			.style("stroke-dasharray", ("3, 3"))
+			.style("opacity", 0.5);
+
+		svg.append("circle")
+			.attr("id", "college2010")
+			.attr("class", "step9")
+			.attr("cx", x(2010))
+			.attr("cy", y(tract.pct_college_10_pctile))
+			.attr("r", pointRad)
+			.style("fill", colors.college)
+			.style("opacity", 1);
+
+		svg.append("line")
+			.attr("id", "collegeLine")
+			.attr("class", "step9")
+			.attr("x1", x(2000))
+			.attr("y1", y(tract.pct_college_00_pctile))
+			.attr("x2", x(2010))
+			.attr("y2", y(tract.pct_college_10_pctile))
+			.style("stroke-width", 3)
+			.style("stroke", colors.college)
+			.style("opacity", 1);
+
+		svg.append("g")
+			.attr("class", "axis")
+			.attr("transform", "translate(0, "+(margin.top+figh)+")")
+			.call(xAxis);
+
+
+		svg.append("g")
+			.attr("class", "axis")
+			.attr("transform", "translate("+(margin.left)+", 0)")
+			.call(yAxis);
+	}
+
+	var public = {
+		"plot": plot_,
+		"tract": tract_
+	}
+
+	return public;
+}
+
 var size = 700;
 var thickness = 40;
 var margin = 25;
@@ -200,6 +414,13 @@ var updateText = function(d) {
 	gentSpan.text(d.data.gent_status);
 }
 
+var gentLines = gentrificationLines();
+var displayGentLines = function(d) {
+	console.log(d)
+	gentLines.tract(d.data);
+	gentLines.plot();
+}
+
 d3.csv("data/nola_viz_data.csv", rowConverter, function(tracts) {
 	var l1 = tracts.filter(function(d) { return d.damage_level == 1; });
 
@@ -213,7 +434,8 @@ d3.csv("data/nola_viz_data.csv", rowConverter, function(tracts) {
 		.style("fill", function(d) { return color(d.data.income_group); })
 		.style("opacity", function(d) { return opacity(d.data.gent_status); })
 		.on("mouseover", updateText)
-		.on("mouseout", function(d) { hoverText.style("display", "none"); });
+		.on("mouseout", function(d) { hoverText.style("display", "none"); })
+		.on("click", displayGentLines);
 
 	var drawIncomeLabelArc = function(income_group) {
 		var startAngle = getStartAngle(l1Pie(l1).filter(function(d) { return d.data.income_group == income_group; }));
@@ -321,7 +543,8 @@ d3.csv("data/nola_viz_data.csv", rowConverter, function(tracts) {
 			.style("fill", function(d) { return color(d.data.income_group); })
 			.style("opacity", function(d) { return opacity(d.data.gent_status); })
 			.on("mouseover", updateText)
-			.on("mouseout", function(d) { hoverText.style("display", "none"); });
+			.on("mouseout", function(d) { hoverText.style("display", "none"); })
+			.on("click", displayGentLines);
 
 		console.log(startAngle);
 		console.log(endAngle);
