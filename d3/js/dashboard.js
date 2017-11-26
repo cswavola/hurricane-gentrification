@@ -10,6 +10,10 @@ var gentrificationLines = function() {
 	var figw = width-margin.left-margin.right;
 
 	var colors = {"income": "green", "home_value": "magenta", "college": "orange"};
+	var lines = ["income", "home_value", "college"];
+	var color = d3.scaleOrdinal()
+		.range(["green", "magenta", "orange"])
+		.domain(lines);
 
 	// Keep track of which visualization
 	// we are on and which was the last
@@ -60,12 +64,29 @@ var gentrificationLines = function() {
 	// 	});
 	// };
 
+	var prettyLineText = function(line) {
+		var text = "";
+		switch(line) {
+			case "income":
+				text = "Median Household Income";
+				break;
+			case "home_value":
+				text = "Median Home Value";
+				break;
+			case "college":
+				text =  "Percent College Educated";
+				break;
+		}
+
+		return text;
+	}
+
 	var plot_ = function() {
 		console.log(tract);
 		d3.select("#detail").selectAll("svg").remove();
 
 		svg = d3.select("#detail").append("svg")
-			.attr("height", height)
+			.attr("height", height+150)
 			.attr("width", width);
 
 		svg.append("line")
@@ -76,7 +97,7 @@ var gentrificationLines = function() {
 			.attr("x2", x(2010))
 			.attr("y2", y(40))
 			.style("stroke-width", 2)
-			.style("stroke", colors.income)
+			.style("stroke", color("income"))
 			.style("stroke-dasharray", ("3, 3"))
 			.style("opacity", 0.5);
 
@@ -86,7 +107,7 @@ var gentrificationLines = function() {
 			.attr("cx", x(2000))
 			.attr("cy", y(tract.med_income_00_pctile))
 			.attr("r", pointRad)
-			.style("fill", colors.income)
+			.style("fill", color("income"))
 			.style("opacity", 1);
 
 		svg.append("circle")
@@ -95,7 +116,7 @@ var gentrificationLines = function() {
 			.attr("cx", x(2010))
 			.attr("cy", y(tract.med_income_10_pctile))
 			.attr("r", pointRad)
-			.style("fill", colors.income)
+			.style("fill", color("income"))
 			.style("opacity", 1);
 
 		svg.append("line")
@@ -106,7 +127,7 @@ var gentrificationLines = function() {
 			.attr("x2", x(2010))
 			.attr("y2", y(tract.med_income_10_pctile))
 			.style("stroke-width", 3)
-			.style("stroke", colors.income)
+			.style("stroke", color("income"))
 			.style("opacity", 1);
 
 		svg.append("circle")
@@ -115,7 +136,7 @@ var gentrificationLines = function() {
 			.attr("cx", x(2000))
 			.attr("cy", y(tract.med_home_value_00_pctile))
 			.attr("r", pointRad)
-			.style("fill", colors.home_value)
+			.style("fill", color("home_value"))
 			.style("opacity", 1);
 
 		svg.append("line")
@@ -126,7 +147,7 @@ var gentrificationLines = function() {
 			.attr("x2", x(2010))
 			.attr("y2", y(tract.med_home_value_ref_pctile))
 			.style("stroke-width", 3)
-			.style("stroke", colors.home_value)
+			.style("stroke", color("home_value"))
 			.style("stroke-dasharray", ("3, 3"))
 			.style("opacity", 0.5);
 
@@ -136,7 +157,7 @@ var gentrificationLines = function() {
 			.attr("cx", x(2010))
 			.attr("cy", y(tract.med_home_value_10_pctile))
 			.attr("r", pointRad)
-			.style("fill", colors.home_value)
+			.style("fill", color("home_value"))
 			.style("opacity", 1);
 
 		svg.append("line")
@@ -147,7 +168,7 @@ var gentrificationLines = function() {
 			.attr("x2", x(2010))
 			.attr("y2", y(tract.med_home_value_10_pctile))
 			.style("stroke-width", 3)
-			.style("stroke", colors.home_value)
+			.style("stroke", color("home_value"))
 			.style("opacity", 1);
 
 
@@ -157,7 +178,7 @@ var gentrificationLines = function() {
 			.attr("cx", x(2000))
 			.attr("cy", y(tract.pct_college_00_pctile))
 			.attr("r", pointRad)
-			.style("fill", colors.college)
+			.style("fill", color("college"))
 			.style("opacity", 1);
 
 		svg.append("line")
@@ -168,7 +189,7 @@ var gentrificationLines = function() {
 			.attr("x2", x(2010))
 			.attr("y2", y(tract.pct_college_ref_pctile))
 			.style("stroke-width", 3)
-			.style("stroke", colors.college)
+			.style("stroke", color("college"))
 			.style("stroke-dasharray", ("3, 3"))
 			.style("opacity", 0.5);
 
@@ -178,7 +199,7 @@ var gentrificationLines = function() {
 			.attr("cx", x(2010))
 			.attr("cy", y(tract.pct_college_10_pctile))
 			.attr("r", pointRad)
-			.style("fill", colors.college)
+			.style("fill", color("college"))
 			.style("opacity", 1);
 
 		svg.append("line")
@@ -189,7 +210,7 @@ var gentrificationLines = function() {
 			.attr("x2", x(2010))
 			.attr("y2", y(tract.pct_college_10_pctile))
 			.style("stroke-width", 3)
-			.style("stroke", colors.college)
+			.style("stroke", color("college"))
 			.style("opacity", 1);
 
 		svg.append("g")
@@ -197,11 +218,45 @@ var gentrificationLines = function() {
 			.attr("transform", "translate(0, "+(margin.top+figh)+")")
 			.call(xAxis);
 
+		svg.append("text")
+			.text("Census Year")
+			.style("text-anchor", "middle")
+			.style("font-weight", "bold")
+			.attr("transform", "translate("+(margin.left+width/2)+", "+(margin.top+figh+margin.bottom*2)+")");
+
 
 		svg.append("g")
 			.attr("class", "axis")
 			.attr("transform", "translate("+(margin.left)+", 0)")
 			.call(yAxis);
+
+		svg.append("text")
+			.text("Percentile")
+			.style("text-anchor", "middle")
+			.style("font-weight", "bold")
+			.attr("transform", "translate(10, "+(height/2+margin.top)+"), rotate(-90)")
+			.attr("trans");
+
+		var legend = svg.append("g")
+			.attr("transform", "translate("+(width/4)+", "+(height+50)+")");
+
+		// legend.append("text").text("TESTING");
+		var lBoxSize = 20;
+		for(var i = 0; i < lines.length; i++) {
+			legend.append("rect")
+				.attr("width", lBoxSize)
+				.attr("height", lBoxSize)
+				.attr("x", 0)
+				.attr("y", i*(lBoxSize+5))
+				.style("fill", color(lines[i]));
+			
+
+			legend.append("text")
+				.text(prettyLineText(lines[i]))
+				.attr("x", lBoxSize+10)
+				.attr("y", i*(lBoxSize+5)+lBoxSize-7)
+				.style("fill", color(lines[i]));
+		}
 	}
 
 	var public = {
@@ -214,7 +269,7 @@ var gentrificationLines = function() {
 
 var size = 700;
 var thickness = 40;
-var margin = 25;
+var margin = 50;
 var radius = (size)/2 - margin;
 var levels = 3;
 var level_gap = 10;
@@ -290,10 +345,26 @@ var prettyDamageText = function(damage_level) {
 	return text;
 }
 
+var prettyGentrificationText = function(gent_status) {
+	var text = "";
+	switch(gent_status) {
+		case "ineligible":
+			text = "Not eligible to gentrify";
+			break;
+		case "eligible":
+			text = "Eligible, but did not gentrify";
+			break;
+		case "gentrified":
+			text = "Gentrified"
+	}
+
+	return text;
+}
+
 
 var svg = d3.select("#viz").append("svg")
 		.attr("width", size)
-		.attr("height", size);
+		.attr("height", size+50);
 
 svg.append("rect")
 	.attr("width", size)
@@ -307,7 +378,7 @@ var gtop = svg.append("g")
 gtop.append("circle")
 	.attr("x", 0)
 	.attr("y", 0)
-	.attr("r", radius-(thickness*(levels+2)))
+	.attr("r", radius-(thickness*(levels+2))+20)
 	.style("fill", "#666666")
 
 var hoverText = gtop
@@ -557,6 +628,43 @@ d3.csv("data/nola_viz_data.csv", rowConverter, function(tracts) {
 	var rings = damage_levels
 		.filter(function(d) { return d > 1; })
 		.forEach(drawRing);
+
+	var legend = svg.append("g")
+			.attr("transform", "translate("+(radius-50)+", "+(size-margin)+")");
+	// legend.append("text").text("TESTING");
+	// legend.append("rect")
+	// 	.attr("x", 0)
+	// 	.attr("y", 0)
+	// 	.attr("width", 10)
+	// 	.attr("height", 10)
+	// 	.style("fill", "blue");
+
+	var lBoxSize = 25;
+	for(var i = 0; i < gent_statuses.length; i++) {
+		lBoxY = i*(lBoxSize+5);
+		
+		for(var j = 0; j < income_groups.length; j++) {
+			lBoxX = j*lBoxSize;
+
+			legend.append("rect")
+				.attr("x", lBoxX)
+				.attr("y", lBoxY)
+				.attr("width", lBoxSize)
+				.attr("height", lBoxSize)
+				.style("fill", color(income_groups[j]))
+				.style("opacity", opacity(gent_statuses[i]));
+		}
+
+		legend.append("text")
+			.text(prettyGentrificationText(gent_statuses[i]))
+			.attr("x", lBoxSize*3+5)
+			.attr("y", lBoxY+lBoxSize-7);
+
+		console.log(gent_statuses[i]);
+	}
+	// gent_statuses.forEach(function(gent) {
+	// 	var y = 
+	// });
 
 
 });
