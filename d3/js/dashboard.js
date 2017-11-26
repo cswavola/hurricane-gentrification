@@ -572,7 +572,7 @@ d3.csv("data/nola_viz_data.csv", rowConverter, function(tracts) {
 				.style("fill", "#EEEEEE")
 			.append("textPath")
 				.attr("xlink:href", "#damageLabelArc"+damage_level)
-				.attr("startOffset", "23%")
+				.attr("startOffset", "22%")
 				.attr("alignment-baseline", "text-before-edge")
 				.text(prettyDamageText(damage_level));
 	}
