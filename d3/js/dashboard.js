@@ -487,7 +487,8 @@ var updateText = function(d) {
 
 var gentLines = gentrificationLines();
 var displayGentLines = function(d) {
-	console.log(d)
+	svg.selectAll("path").style("stroke", "none");
+	d3.select(this).style("stroke", "black");
 	gentLines.tract(d.data);
 	gentLines.plot();
 }
@@ -503,7 +504,7 @@ d3.csv("data/nola_viz_data.csv", rowConverter, function(tracts) {
 	g1.append("path")
 		.attr("d", l1Arc)
 		.style("fill", function(d) { return color(d.data.income_group); })
-		.style("opacity", function(d) { return opacity(d.data.gent_status); })
+		.style("fill-opacity", function(d) { return opacity(d.data.gent_status); })
 		.on("mouseover", updateText)
 		.on("mouseout", function(d) { hoverText.style("display", "none"); })
 		.on("click", displayGentLines);
@@ -612,7 +613,8 @@ d3.csv("data/nola_viz_data.csv", rowConverter, function(tracts) {
 		gCur.append("path")
 			.attr("d", lCurArc)
 			.style("fill", function(d) { return color(d.data.income_group); })
-			.style("opacity", function(d) { return opacity(d.data.gent_status); })
+			.style("fill-opacity", function(d) { return opacity(d.data.gent_status); })
+			// .style("stroke-opacity", 1)
 			.on("mouseover", updateText)
 			.on("mouseout", function(d) { hoverText.style("display", "none"); })
 			.on("click", displayGentLines);
