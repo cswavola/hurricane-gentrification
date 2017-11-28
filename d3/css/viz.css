@@ -36,3 +36,27 @@
 path.domain, g.tick line {
 	opacity: 0;
 }
+
+h3 {
+	padding-left: 50px;
+}
+
+#overlay {
+	height: 800px;
+	width: 1100px;
+	margin-left: 50px;
+	background-color: white;
+}
+
+#overlay .example {
+	width: 340px;
+	height: 675px;
+	float: left;
+	padding: 10px;
+	margin: 10px;
+	border: 1px solid black;
+}
+
+#overlay .example svg {
+	height: 325px;
+}

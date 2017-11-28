@@ -717,28 +717,10 @@ d3.csv("data/nola_viz_data.csv", rowConverter, function(tracts) {
 	// });
 
 
-	var overlay = d3.select("body").append("svg")
-			.attr("x", 0)
-			.attr("y", 0)
-			.attr("id", "overlay")
-			.attr("height", 750)
-			.attr("width", 1100)
-			.style("position", "fixed")
-			.style("left", 0)
-			.on("click", function(d) { d3.select(this).style("display", "none"); });
-	overlay
-		.append("rect")
-			.attr("x", 0)
-			.attr("y", 0)
-			.attr("height", 750)
-			.attr("width", 1100)
-			.style("fill", "white")
-			.style("opacity", 1);
+	
 
 	var exampleTract = tracts.filter(function(d) { return d.gentrified; })[0];
 
-	var example1 = overlay.append("g").attr("id", "example1")
-		.attr("transform", "translate(50, 0)");
 	var example1chart = gentrificationLines();
 	example1chart
 		.tract(exampleTract)
@@ -746,63 +728,6 @@ d3.csv("data/nola_viz_data.csv", rowConverter, function(tracts) {
 		.width(300).height(300)
 		.plot();
 
-	var example1text = example1.append("text")
-		.attr("transform", "translate(20, 350)")
-		.style("font-size", 11);
-
-	example1text.append("tspan")
-		.text("Gentrification is the process of fiscal transformation of a");
-
-	example1text.append("tspan")
-		.text("community in an affluent direction. The process itself does not")
-		.attr("x", 0)
-		.attr("dy", 12);
-
-	example1text.append("tspan")
-		.text("depend on a specific event, but to be described as 'gentrified,'")
-		.attr("x", 0)
-		.attr("dy", 12);
-
-	example1text.append("tspan")
-		.text("a community would experience these changes in a relatively brief")
-		.attr("x", 0)
-		.attr("dy", 12);
-
-	example1text.append("tspan")
-		.text("period of time. While gentrification methodologies can also use ")
-		.attr("x", 0)
-		.attr("dy", 12);
-
-	example1text.append("tspan")
-		.text("demographics of household relations and racial diversity as a metric,")
-		.attr("x", 0)
-		.attr("dy", 12);
-
-	example1text.append("tspan")
-		.text("this representation uses solely the financial features to determine")
-		.attr("x", 0)
-		.attr("dy", 12);
-
-	example1text.append("tspan")
-		.text("determine gentrification eligibility and status.")
-		.attr("x", 0)
-		.attr("dy", 12);
-
-	example1text.append("tspan")
-		.text("Above is an example of a census tract within New Orleans")
-		.attr("x", 0)
-		.attr("dy", 20)
-		.style("font-weight", "bold");
-
-	example1text.append("tspan")
-		.text("that has gentrified.")
-		.attr("x", 0)
-		.attr("dy", 12)
-		.style("font-weight", "bold");
-
-	var example2 = overlay.append("g")
-		.attr("id", "example2")
-		.attr("transform", "translate(400, 0)")
 	var example2chart = gentrificationLines();
 	example2chart
 		.tract(exampleTract)
@@ -810,143 +735,41 @@ d3.csv("data/nola_viz_data.csv", rowConverter, function(tracts) {
 		.width(300).height(300)
 		.plot();
 
-	var example2text = example2.append("text")
-		.attr("transform", "translate(20, 350)")
-		.style("font-size", 11);
-
-	example2text.append("tspan")
-		.text("One common metric used to evaluate gentrification is median");
-
-	example2text.append("tspan")
-		.text("income. For a community to be considered 'eligible' to gentrify,")
-		.attr("x", 0)
-		.attr("dy", 12);
-
-	example2text.append("tspan")
-		.text("starting median income must be below the 40th percentile of")
-		.attr("x", 0)
-		.attr("dy", 12);
-
-	example2text.append("tspan")
-		.text("incomes in the city. The ending income of a gentrified community")
-		.attr("x", 0)
-		.attr("dy", 12);
-
-	example2text.append("tspan")
-		.text("may be above this marker, however median income metrics often")
-		.attr("x", 0)
-		.attr("dy", 12);
-
-	example2text.append("tspan")
-		.text("lag relative to other fiscal indicators. Therefore median income")
-		.attr("x", 0)
-		.attr("dy", 12);
-
-	example2text.append("tspan")
-		.text("is only used to verify eligibility.")
-		.attr("x", 0)
-		.attr("dy", 12);
-
-	example2text.append("tspan")
-		.text("Because the tract has a starting (2000) median income below")
-		.attr("x", 0)
-		.attr("dy", 20)
-		.style("font-weight", "bold");
-
-	example2text.append("tspan")
-		.text("the 40th percentile, it is eligible to gentrify.")
-		.attr("x", 0)
-		.attr("dy", 12)
-		.style("font-weight", "bold");
-
+	var example2 = d3.select("#example2");
 	example2.selectAll("line").style("opacity", 0.1);
 	example2.selectAll("circle").style("opacity", 0.1);
 	example2.select(".step1").style("opacity", 1);
 	example2.select(".step2").style("opacity", 1);
 	example2.selectAll(".step3").style("opacity", 1);
+	example2.selectAll(".step4").style("opacity", 1);
 
 
 
-	var example3 = overlay.append("g")
-		.attr("id", "example3")
-		.attr("transform", "translate(750, 0)")
 	var example3chart = gentrificationLines();
 	example3chart
 		.tract(exampleTract).selector("#example3").width(300).height(300).plot();
+
+	var example3 = d3.select("#example3");
 	example3.selectAll(".step1").style("opacity", 0.1);
 	example3.selectAll(".step2").style("opacity", 0.1);
 	example3.selectAll(".step3").style("opacity", 0.1);
 
-	var example3text = example3.append("text")
-		.attr("transform", "translate(20, 350)")
-		.style("font-size", 11);
+	d3.select("#overlay").on("click", function(d) {
+		var sel = d3.select(this);
+		sel.transition()
+			.duration(500).style("opacity", 0)
+			.on("end", function(d) {
+				sel.style("display", "none");
+				d3.select("#viz").style("display", "block");
+			});
+	});
 
-	example3text.append("tspan")
-		.text("This analysis uses the home value (pink) and educational");
-
-	example3text.append("tspan")
-		.text("attainment (orange) to evaluate the fiscal growth of a locality, as")
-		.attr("x", 0)
-		.attr("dy", 12);
-
-	example3text.append("tspan")
-		.text("these metrics tend to be leading indicators of growth, Instead of")
-		.attr("x", 0)
-		.attr("dy", 12);
-
-	example3text.append("tspan")
-		.text("comparing to a fixed target value, these metrics are compared")
-		.attr("x", 0)
-		.attr("dy", 12);
-
-	example3text.append("tspan")
-		.text("with the rates of growth with the city (adjusted for inflation). The")
-		.attr("x", 0)
-		.attr("dy", 12);
-
-	example3text.append("tspan")
-		.text("dotted lines indicate the target rate of increase for each value.")
-		.attr("x", 0)
-		.attr("dy", 12);
-
-	example3text.append("tspan")
-		.text("While a community can change and metrics of fiscal growth can")
-		.attr("x", 0)
-		.attr("dy", 12);
-
-	example3text.append("tspan")
-		.text("increase, only those that increase more rapidly than the norm can")
-		.attr("x", 0)
-		.attr("dy", 12);
-
-	example3text.append("tspan")
-		.text("be labeled as 'gentrified.' ")
-		.attr("x", 0)
-		.attr("dy", 12);
-
-	example3text.append("tspan")
-		.text("")
-		.attr("x", 0)
-		.attr("dy", 12);
-
-	example3text.append("tspan")
-		.text("Because growth in home value and educational attainment")
-		.attr("x", 0)
-		.attr("dy", 20)
-		.style("font-weight", "bold");
-
-	example3text.append("tspan")
-		.text("are both above the norm, we consider the tract gentrified.")
-		.attr("x", 0)
-		.attr("dy", 12)
-		.style("font-weight", "bold");
-
-	overlay.append("text")
-		.text("Click anywhere to continue")
-		.attr("y", 550)
-		.attr("x", 550)
-		.attr("text-anchor", "middle")
-		.style("font-weight", "bold")
-		.style("font-size", 20);
+	// overlay.append("text")
+	// 	.text("Click anywhere to continue")
+	// 	.attr("y", 650)
+	// 	.attr("x", 550)
+	// 	.attr("text-anchor", "middle")
+	// 	.style("font-weight", "bold")
+	// 	.style("font-size", 20);
 
 });
