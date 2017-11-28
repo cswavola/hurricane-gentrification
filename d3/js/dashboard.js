@@ -547,15 +547,13 @@ d3.csv("data/nola_viz_data.csv", rowConverter, function(tracts) {
 	var g1 = gtop.selectAll(".arc1")
 			.data(l1Pie(l1))
 		.enter().append("g")
-			.attr("class", "arc1");
+			.attr("class", "arc1 arc");
 
 	g1.append("path")
-		.attr("d", l1Arc)
-		.style("fill", function(d) { return color(d.data.income_group); })
-		.style("fill-opacity", function(d) { return opacity(d.data.gent_status); })
-		.on("mouseover", updateText)
-		.on("mouseout", function(d) { hoverText.style("display", "none"); })
-		.on("click", displayGentLines);
+		.attr("d", l1Arc);
+		// .on("mouseover", updateText)
+		// .on("mouseout", function(d) { hoverText.style("display", "none"); })
+		// .on("click", displayGentLines);
 
 	var drawIncomeLabelArc = function(income_group) {
 		var startAngle = getStartAngle(l1Pie(l1).filter(function(d) { return d.data.income_group == income_group; }));
@@ -656,16 +654,14 @@ d3.csv("data/nola_viz_data.csv", rowConverter, function(tracts) {
 		var gCur = gtop.selectAll(".arc"+damage_level+income_group)
 				.data(lCurPie(lCur))
 			.enter().append("g")
-				.attr("class", "arc"+damage_level+income_group);
+				.attr("class", "arc arc"+damage_level+income_group);
 
 		gCur.append("path")
-			.attr("d", lCurArc)
-			.style("fill", function(d) { return color(d.data.income_group); })
-			.style("fill-opacity", function(d) { return opacity(d.data.gent_status); })
+			.attr("d", lCurArc);
 			// .style("stroke-opacity", 1)
-			.on("mouseover", updateText)
-			.on("mouseout", function(d) { hoverText.style("display", "none"); })
-			.on("click", displayGentLines);
+			// .on("mouseover", updateText)
+			// .on("mouseout", function(d) { hoverText.style("display", "none"); })
+			// .on("click", displayGentLines);
 
 		// console.log(startAngle);
 		// console.log(endAngle);
@@ -678,6 +674,20 @@ d3.csv("data/nola_viz_data.csv", rowConverter, function(tracts) {
 	var rings = damage_levels
 		.filter(function(d) { return d > 1; })
 		.forEach(drawRing);
+
+	d3.selectAll(".arc")
+		.style("fill", function(d) { return color(d.data.income_group); })
+		.style("fill-opacity", function(d) { return opacity(d.data.gent_status); })
+		.on("mouseover", function(d) {
+			updateText(d);
+			d3.select(this).style("cursor", "pointer");
+		})
+		.on("mouseout", function(d) {
+			hoverText.style("display", "none");
+			d3.select(this).style("cursor", "default");
+		})
+		.on("click", displayGentLines);
+
 
 	var legend = svg.append("g")
 			.attr("transform", "translate("+(radius-50)+", "+(size-margin)+")");
