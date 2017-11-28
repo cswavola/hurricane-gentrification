@@ -535,8 +535,9 @@ var updateText = function(d) {
 
 var gentLines = gentrificationLines();
 var displayGentLines = function(d) {
+	console.log(this);
 	svg.selectAll("path").style("stroke", "none");
-	d3.select(this).style("stroke", "black");
+	d3.select(this).select("path").style("stroke", "black");
 	gentLines.tract(d.data).legend(true);
 	gentLines.plot();
 }
@@ -658,7 +659,7 @@ d3.csv("data/nola_viz_data.csv", rowConverter, function(tracts) {
 
 		gCur.append("path")
 			.attr("d", lCurArc);
-			// .style("stroke-opacity", 1)
+			// .style("stroke-opacity", 1);
 			// .on("mouseover", updateText)
 			// .on("mouseout", function(d) { hoverText.style("display", "none"); })
 			// .on("click", displayGentLines);
@@ -678,6 +679,7 @@ d3.csv("data/nola_viz_data.csv", rowConverter, function(tracts) {
 	d3.selectAll(".arc")
 		.style("fill", function(d) { return color(d.data.income_group); })
 		.style("fill-opacity", function(d) { return opacity(d.data.gent_status); })
+		.style("stroke-opacity", 1)
 		.on("mouseover", function(d) {
 			updateText(d);
 			d3.select(this).style("cursor", "pointer");
