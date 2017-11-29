@@ -60,3 +60,19 @@ h3 {
 #overlay .example svg {
 	height: 325px;
 }
+
+#overlay span.colored {
+	font-weight: bold;
+}
+
+#overlay span.income {
+	color: green;
+}
+
+#overlay span.home {
+	color: magenta;
+}
+
+#overlay span.college {
+	color: orange;
+}

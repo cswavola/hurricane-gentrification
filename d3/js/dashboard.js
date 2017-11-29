@@ -336,7 +336,7 @@ var color = d3.scaleOrdinal()
 	.domain(income_groups);
 
 var opacity = d3.scaleOrdinal()
-	.range([0.2, 0.4, 1.0])
+	.range([0.2, 0.5, 1.0])
 	.domain(gent_statuses);
 
 var l1Arc = d3.arc()
@@ -346,6 +346,7 @@ var l1Arc = d3.arc()
 var l1Pie = d3.pie()
 	.sort(function(a, b) {
 		return d3.ascending(a.income_group, b.income_group) || d3.ascending(a.population_00, b.population_00);
+		// return d3.ascending(a.income_group, b.income_group) || d3.ascending(a.med_income_00, b.med_income_00);
 	})
 	.padAngle(0.004)
 	.startAngle(0.3)
@@ -535,7 +536,6 @@ var updateText = function(d) {
 
 var gentLines = gentrificationLines();
 var displayGentLines = function(d) {
-	console.log(this);
 	svg.selectAll("path").style("stroke", "none");
 	d3.select(this).select("path").style("stroke", "black");
 	gentLines.tract(d.data).legend(true);

@@ -13,11 +13,13 @@
     <div id="detail">
     </div>
     <div id="overlay">
-      <p>Gentrification is the process of transformation of a poor and disinvested community in an affluent direction. The changing economic status and incoming population often lead to displacement of existing residents. Typically this is a result of investors seeking low-cost opportunities for development, but the process can be jumpstarted by a catastrophic event, such as hurricane Katrina, whose damage pre-emptively drives out population, and necessitates significant new construction.</p>
+      <p>
+        Gentrification is the affluent transformation of a previously poor and disinvested community. The changing economic status and incoming population often displace existing residents. Typically gentrification is a slow process of investors seeking low-cost opportunities for development, but the process can be jumpstarted by a catastrophic event, such as hurricane Katrina, whose damage pre-emptively drives out population, and necessitates significant new construction.
+      </p>
       <div class="example">
         <svg id="example1"></svg>
         <p>
-          For this application, we rely on an analytic description of gentrification, focused on economic factors. Gentrification is defined by low initial median income (green) and median home value (pink), and a higher than average rise in both home value and educational attainment.
+          Here we present an analytic description of gentrification, focused on economic factors. Gentrification is defined by low initial <span class="colored income">median income (green)</span> and <span class="colored home">median home value (pink)</span>, and a higher than average rise in both <span class="colored home">home value</span> and <span class="colored college">educational attainment (orange)</span>.
         </p>
         <p>
           <b>Above is an example of a census tract within New Orleans that has gentrified.</b>
@@ -25,21 +27,33 @@
       </div>
       <div class="example">
         <svg id="example2"></svg>
-        <p>Low median income and median home value are the main qualifiers for gentrification eligibility. Among city census tracts, any neighborhood with both of these values falling below the 40th percentile for the city as a whole is eligible to gentrify.</p>
+        <p>
+          Low <span class="colored income">median income</span> and <span class="colored home">median home value</span> are the main qualifiers for gentrification eligibility. Among city census tracts, any neighborhood with both of these values falling below the <span class="colored">40th percentile</span> for the city as a whole is eligible to gentrify.
+        </p>
 
-        <p>While median income may rise, it often lags behind other changes, and its ending value is ultimately not a reliable indicator.</p>
+        <p>
+          While <span class="colored income">median income</span> may rise, it often lags behind other changes, and its ending value is ultimately not a reliable indicator.
+        </p>
 
-        <p><b>Because the tract displayed has a starting (2000) median income and home value both below the 40th percentile, it is eligible to gentrify.</b></p>
+        <p>
+          <b>Because the tract displayed has a starting (2000) median <span class="income">income</span> and <span class="home">home value</span> both below the 40th percentile, it is eligible to gentrify.</b>
+        </p>
       </div>
       <div class="example">
         <svg id="example3"></svg>
-        <p>Finally, to be considered gentrified, both home value (pink) and educational attainment (orange)—measured in the number of residents with at least a four year college degree—must rise more than the norm. Educational increase is a leading indicator of later income rise.</p>
+        <p>
+          To be considered gentrified, both <span class="colored home">home value</span> and <span class="colored college">educational attainment</span>—percentage of residents with at least a four-year college degree—must rise more than the norm. Educational increase is a leading indicator of later income rise.
+        </p>
 
-        <p>The dashed reference lines represent the 67th percentile of growth in each parameter. Growth in the top third percentile, falling above these lines, indicates that a neighborhood has gentrified, according to our definition.</p>
+        <p>
+          The dashed reference lines represent the <span class="colored">67th percentile</span> of growth in each parameter. Growth falling above these lines indicates that an eligible neighborhood has gentrified.
+        </p>
 
-        <p><b>Because the growth in home value and educational attainment are both above the reference norm, we consider the tract gentrified.</b></p>
+        <p>
+          <b>Because the growth in <span class="home">home value</span> and <span class="college">educational attainment</span> are both above the reference norm, we consider the tract gentrified.</b>
+        </p>
       </div>
-      <h4>Click anywhere to continue</h4>
+      <h4>Click anywhere to proceed.</h4>
     </div>
     <script src="http://d3js.org/d3.v4.min.js"></script>    
     <script src="js/dashboard.js"></script>
