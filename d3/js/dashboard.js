@@ -131,17 +131,34 @@ var gentrificationLines = function() {
 			.attr("height", height+(showLegend*150))
 			.attr("width", width);
 
-		svg.append("line")
-			.attr("id", "incThresh")
+		svg.append("rect")
+			.attr("id", "incThreshRect")
 			.attr("class", "step1")
-			.attr("x1", x(2000))
-			.attr("y1", y(40))
-			.attr("x2", x(2010))
-			.attr("y2", y(40))
-			.style("stroke-width", 2)
-			.style("stroke", color("income"))
-			.style("stroke-dasharray", ("3, 3"))
-			.style("opacity", 0.5);
+			.attr("x", x(2000))
+			.attr("y", y(40))
+			.attr("height", y(0)-y(40))
+			.attr("width", x(2010)-x(2000))
+			.attr("fill", "#DDDDDD");
+		svg.append("rect")
+			.attr("id", "incThreshRect2")
+			.attr("class", "step1")
+			.attr("x", x(2000))
+			.attr("y", y(100))
+			.attr("height", y(40)-y(100))
+			.attr("width", x(2010)-x(2000))
+			.attr("fill", "#EEEEEE");
+
+		// svg.append("line")
+		// 	.attr("id", "incThresh")
+		// 	.attr("class", "step1")
+		// 	.attr("x1", x(2000))
+		// 	.attr("y1", y(40))
+		// 	.attr("x2", x(2010))
+		// 	.attr("y2", y(40))
+		// 	.style("stroke-width", 2)
+		// 	.style("stroke", color("income"))
+		// 	.style("stroke-dasharray", ("3, 3"))
+		// 	.style("opacity", 0.5);
 
 		svg.append("circle")
 			.attr("id", "inc2000")
@@ -321,7 +338,7 @@ var margin = 50;
 var radius = (size)/2 - margin;
 var levels = 3;
 var level_gap = 10;
-var income_groups = ["low", "medium", "high"];
+var income_groups = [1, 2, 3];
 var damage_levels = [1, 2, 3]
 var gent_statuses = ["ineligible", "eligible", "gentrified"];
 
@@ -343,11 +360,12 @@ var l1Arc = d3.arc()
 	.outerRadius(radius - ((levels-1)*(thickness+level_gap)))
 	.innerRadius(radius - ((levels-1)*(thickness+level_gap)) - thickness)
 
+var segmentSort = function(a, b) {
+	return d3.ascending(a.income_group, b.income_group) || d3.descending(gent_statuses.indexOf(a.gent_status), gent_statuses.indexOf(b.gent_status)) || d3.ascending(a.population_00, b.population_00);
+}
+
 var l1Pie = d3.pie()
-	.sort(function(a, b) {
-		return d3.ascending(a.income_group, b.income_group) || d3.ascending(a.population_00, b.population_00);
-		// return d3.ascending(a.income_group, b.income_group) || d3.ascending(a.med_income_00, b.med_income_00);
-	})
+	.sort(segmentSort)
 	.padAngle(0.004)
 	.startAngle(0.3)
 	.endAngle(2*Math.PI-0.3)
@@ -364,13 +382,13 @@ var getEndAngle = function(d) {
 var prettyIncomeText = function(income_group) {
 	var text = "";
 	switch(income_group) {
-		case "low":
+		case 1:
 			text = "Low Income Tracts";
 			break;
-		case "medium":
+		case 2:
 			text = "Middle Income Tracts";
 			break;
-		case "high":
+		case 3:
 			text =  "High Income Tracts";
 			break;
 	}
@@ -507,11 +525,11 @@ var rowConverter = function(d) {
 	d.pct_damage = parseFloat(d.pct_damage);
 
 	if(d.med_income_00_pctile <= 33) {
-		d.income_group = "low";
+		d.income_group = 1;
 	} else if(d.med_income_00_pctile <= 66) {
-		d.income_group = "medium";
+		d.income_group = 2;
 	} else {
-		d.income_group = "high";
+		d.income_group = 3;
 	}
 
 	if(d.pct_damage <= 10) {
@@ -644,9 +662,7 @@ d3.csv("data/nola_viz_data.csv", rowConverter, function(tracts) {
 			.innerRadius(radius - ((levels-damage_level)*(thickness+level_gap)) - thickness)
 
 		var lCurPie = d3.pie()
-			.sort(function(a, b) {
-				return d3.ascending(a.income_group, b.income_group) || d3.ascending(a.population_00, b.population_00);
-			})
+			.sort(segmentSort)
 			.startAngle(startAngle)
 			.endAngle(endAngle)
 			.padAngle(0.004)
@@ -692,14 +708,9 @@ d3.csv("data/nola_viz_data.csv", rowConverter, function(tracts) {
 
 
 	var legend = svg.append("g")
+			// .attr("transform", "translate(0,"+(size-3*margin)+")");
 			.attr("transform", "translate("+(radius-50)+", "+(size-margin)+")");
-	// legend.append("text").text("TESTING");
-	// legend.append("rect")
-	// 	.attr("x", 0)
-	// 	.attr("y", 0)
-	// 	.attr("width", 10)
-	// 	.attr("height", 10)
-	// 	.style("fill", "blue");
+
 
 	var lBoxSize = 25;
 	for(var i = 0; i < gent_statuses.length; i++) {
@@ -775,13 +786,5 @@ d3.csv("data/nola_viz_data.csv", rowConverter, function(tracts) {
 				d3.select("#viz").style("display", "block");
 			});
 	});
-
-	// overlay.append("text")
-	// 	.text("Click anywhere to continue")
-	// 	.attr("y", 650)
-	// 	.attr("x", 550)
-	// 	.attr("text-anchor", "middle")
-	// 	.style("font-weight", "bold")
-	// 	.style("font-size", 20);
 
 });
