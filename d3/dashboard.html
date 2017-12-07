@@ -11,6 +11,44 @@
     <div id="viz">
     </div>
     <div id="detail">
+      <h3 id="tractID">Tract ID: <span></span></h3>
+      <h4 id="status">This tract is <span></span>. (<a href="javascript:void(null)" id="why">Why?</a>)</h4>
+      <div id="gentrification"></div>
+      <div id="map"></div>
+      <div id="stats">
+        <table>
+          <thead>
+            <tr><th></th><th>2000</th><th>2010</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>Population</th>
+              <td id="population_00"></td>
+              <td id="population_10"></td>
+            </tr>
+            <tr>
+              <th>Median Household Income</th>
+              <td id="med_income_00"></td>
+              <td id="med_income_10"></td>
+            </tr>
+            <tr>
+              <th>Median Home Value</th>
+              <td id="med_home_value_00"></td>
+              <td id="med_home_value_10"></td>
+            </tr>
+            <tr>
+              <th>Percent College Educated</th>
+              <td id="pct_college_00"></td>
+              <td id="pct_college_10"></td>
+            </tr>
+            <tr>
+              <th>Percent White</th>
+              <td id="pct_white_00"></td>
+              <td id="pct_white_10"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
     <div id="overlay">
       <p>
@@ -55,7 +93,9 @@
       </div>
       <h4>Click anywhere to proceed.</h4>
     </div>
-    <script src="http://d3js.org/d3.v4.min.js"></script>    
+    <script src="http://d3js.org/d3.v4.min.js"></script>
+    <script src="js/gentrificationLines.js"></script>
+    <script src="js/map.js"></script>
     <script src="js/dashboard.js"></script>
   </body>
 </html>

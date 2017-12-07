@@ -2,7 +2,10 @@ library(tigris)
 library(maptools)
 library(ggplot2)
 library(plyr)
+library(rgdal)
 nola_tracts = tracts(state=22, county=71)
+# writeOGR(obj=nola_tracts, dsn="data/tracts", layer="nola", driver="ESRI Shapefile")
+
 plot(nola_tracts)
 
 nola_damage <- read.csv("arcdemo/data/nola_viz_data.csv")

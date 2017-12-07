@@ -1,487 +1,437 @@
-var gentrificationLines = function() {
-	var height = 600;
-	var width = 400;
-	var margin = {top: 20, right: 20, bottom: 20, left: 40};
-	var pointRad = 5;
-	var svg = null;
-	var g = null;
+var radialChart = function() {
+	var size = 700;
+	var thickness = 40;
+	var margin = 50;
+	var radius = (size)/2 - margin;
+	var levels = 3;
+	var level_gap = 10;
+	var income_groups = [1, 2, 3];
+	var damage_levels = [1, 2, 3];
+	var gent_statuses = ["ineligible", "eligible", "gentrified"];
 
-	var showLegend = false;
-	var selector = "#detail";
+	var x = d3.scaleLinear()
+		.range([0, 2*Math.PI]);
 
-	var figh = height-margin.top-margin.bottom;
-	var figw = width-margin.left-margin.right;
+	var y = d3.scaleSqrt()
+		.range([0, radius]);
 
-	var colors = {"income": "green", "home_value": "magenta", "college": "orange"};
-	var lines = ["income", "home_value", "college"];
 	var color = d3.scaleOrdinal()
-		.range(["green", "magenta", "orange"])
-		.domain(lines);
+		.range(["red", "purple", "blue"])
+		.domain(income_groups);
 
-	// Keep track of which visualization
-	// we are on and which was the last
-	// index activated. When user scrolls
-	// quickly, we want to call all the
-	// activate functions that they pass.
-	var lastIndex = -1;
-	var activeIndex = 0;
+	var opacity = d3.scaleOrdinal()
+		.range([0.2, 0.5, 1.0])
+		.domain(gent_statuses);
 
-	var activateFunctions = [];
+	var l1Arc = d3.arc()
+		.outerRadius(radius - ((levels-1)*(thickness+level_gap)))
+		.innerRadius(radius - ((levels-1)*(thickness+level_gap)) - thickness)
 
-
-	var x = d3.scaleOrdinal()
-		.range([margin.left, margin.left+figw])
-		.domain([2000, 2010]);
-	var y = d3.scaleLinear()
-		.range([margin.top+figh, margin.top])
-		.domain([0, 100]);
-
-	var xAxis = d3.axisBottom()
-		.scale(x);
-	var yAxis = d3.axisLeft()
-		.scale(y)
-		.ticks(5);
-
-	var tract = {};
-	var tract_ = function(_) {
-		var that = this;
-		if(!arguments.length) return tract;
-		tract = _;
-		return that;
+	var segmentSort = function(a, b) {
+		return d3.ascending(a.income_group, b.income_group) || d3.descending(gent_statuses.indexOf(a.gent_status), gent_statuses.indexOf(b.gent_status)) || d3.ascending(a.population_00, b.population_00);
 	}
 
+	var l1Pie = d3.pie()
+		.sort(segmentSort)
+		.padAngle(0.004)
+		.startAngle(0.3)
+		.endAngle(2*Math.PI-0.3)
+		.value(function(d) { return d.population_00; });
 
-	var showLegend_ = function(_) {
-		var that = this;
-		if(!arguments.length) return showLegend;
-		showLegend = _;
-		return that;
+	var getStartAngle = function(d) {
+		return d3.min(d, function(d) { return d.startAngle; });
 	}
 
-	var selector_ = function(_) {
-		var that = this;
-		if(!arguments.length) return selector;
-		selector = _;
-		return that;
+	var getEndAngle = function(d) {
+		return d3.max(d, function(d) { return d.endAngle; });
 	}
 
-	var height_ = function(_) {
-		var that = this;
-		if(!arguments.length) return height;
-		height = _;
-
-		figh = height-margin.top-margin.bottom;
-		y.range([margin.top+figh, margin.top]);
-
-		return that;
-	}
-
-
-	var width_ = function(_) {
-		var that = this;
-		if(!arguments.length) return width;
-		width = _;
-
-		figw = width-margin.left-margin.right;
-		x.range([margin.left, margin.left+figw]);
-
-		return that;
-	}
-
-
-	// var chart = function(selection) {
-	// 	selection.each(function(tract) {
-	// 		console.log(tract);
-	// 		svg = d3.select(this).selectAll("svg")
-	// 			.data([tract]);
-
-	// 		var svge = svg.enter().append("svg");
-	// 		svg = svg.merge(svge)
-
-	// 		svg
-	// 			.attr("width", width)
-	// 			.attr("height", height);
-	// 		svg.append("g");
-	// 		setupVis(tract);
-	// 	});
-	// };
-
-	var prettyLineText = function(line) {
+	var prettyIncomeText = function(income_group) {
 		var text = "";
-		switch(line) {
-			case "income":
-				text = "Median Household Income";
+		switch(income_group) {
+			case 1:
+				text = "Low Income Tracts";
 				break;
-			case "home_value":
-				text = "Median Home Value";
+			case 2:
+				text = "Middle Income Tracts";
 				break;
-			case "college":
-				text =  "Percent College Educated";
+			case 3:
+				text =  "High Income Tracts";
 				break;
 		}
 
 		return text;
 	}
 
-	var plot_ = function() {
-		// console.log(tract);
-		d3.select(selector).selectAll("svg").remove();
+	var levelText = function(level) {
+		var text = "";
+		switch(level) {
+			case 1:
+				text = "Low";
+				break;
+			case 2:
+				text = "Medium";
+				break;
+			case 3:
+				text = "High";
+				break;
+		}
+		return text;
+	}
 
-		svg = d3.select(selector).append("svg")
-			.attr("height", height+(showLegend*150))
-			.attr("width", width);
+	var prettyDamageText = function(damage_level) {
+		var text = "";
+		switch(damage_level) {
+			case 1:
+				text = "Most Damage";
+				break;
+			case 2:
+				text = "Moderate Damage";
+				break;
+			case 3:
+				text = "Least Damage"
+		}
 
-		svg.append("rect")
-			.attr("id", "incThreshRect")
-			.attr("class", "step1")
-			.attr("x", x(2000))
-			.attr("y", y(40))
-			.attr("height", y(0)-y(40))
-			.attr("width", x(2010)-x(2000))
-			.attr("fill", "#DDDDDD");
-		svg.append("rect")
-			.attr("id", "incThreshRect2")
-			.attr("class", "step1")
-			.attr("x", x(2000))
-			.attr("y", y(100))
-			.attr("height", y(40)-y(100))
-			.attr("width", x(2010)-x(2000))
-			.attr("fill", "#EEEEEE");
+		return text;
+	}
 
-		// svg.append("line")
-		// 	.attr("id", "incThresh")
-		// 	.attr("class", "step1")
-		// 	.attr("x1", x(2000))
-		// 	.attr("y1", y(40))
-		// 	.attr("x2", x(2010))
-		// 	.attr("y2", y(40))
-		// 	.style("stroke-width", 2)
-		// 	.style("stroke", color("income"))
-		// 	.style("stroke-dasharray", ("3, 3"))
-		// 	.style("opacity", 0.5);
+	var prettyGentrificationText = function(gent_status) {
+		var text = "";
+		switch(gent_status) {
+			case "ineligible":
+				text = "Not eligible to gentrify";
+				break;
+			case "eligible":
+				text = "Eligible, but did not gentrify";
+				break;
+			case "gentrified":
+				text = "Gentrified"
+		}
 
-		svg.append("circle")
-			.attr("id", "inc2000")
-			.attr("class", "step2")
-			.attr("cx", x(2000))
-			.attr("cy", y(tract.med_income_00_pctile))
-			.attr("r", pointRad)
-			.style("fill", color("income"))
-			.style("opacity", 1);
-
-		svg.append("circle")
-			.attr("id", "inc2010")
-			.attr("class", "step3")
-			.attr("cx", x(2010))
-			.attr("cy", y(tract.med_income_10_pctile))
-			.attr("r", pointRad)
-			.style("fill", color("income"))
-			.style("opacity", 1);
-
-		svg.append("line")
-			.attr("id", "incLine")
-			.attr("class", "step3")
-			.attr("x1", x(2000))
-			.attr("y1", y(tract.med_income_00_pctile))
-			.attr("x2", x(2010))
-			.attr("y2", y(tract.med_income_10_pctile))
-			.style("stroke-width", 3)
-			.style("stroke", color("income"))
-			.style("opacity", 1);
-
-		svg.append("circle")
-			.attr("id", "hv2000")
-			.attr("class", "step4")
-			.attr("cx", x(2000))
-			.attr("cy", y(tract.med_home_value_00_pctile))
-			.attr("r", pointRad)
-			.style("fill", color("home_value"))
-			.style("opacity", 1);
-
-		svg.append("line")
-			.attr("id", "hvThresh")
-			.attr("class", "step5")
-			.attr("x1", x(2000))
-			.attr("y1", y(tract.med_home_value_00_pctile))
-			.attr("x2", x(2010))
-			.attr("y2", y(tract.med_home_value_ref_pctile))
-			.style("stroke-width", 3)
-			.style("stroke", color("home_value"))
-			.style("stroke-dasharray", ("3, 3"))
-			.style("opacity", 0.5);
-
-		svg.append("circle")
-			.attr("id", "hv2010")
-			.attr("class", "step6")
-			.attr("cx", x(2010))
-			.attr("cy", y(tract.med_home_value_10_pctile))
-			.attr("r", pointRad)
-			.style("fill", color("home_value"))
-			.style("opacity", 1);
-
-		svg.append("line")
-			.attr("id", "hvLine")
-			.attr("class", "step6")
-			.attr("x1", x(2000))
-			.attr("y1", y(tract.med_home_value_00_pctile))
-			.attr("x2", x(2010))
-			.attr("y2", y(tract.med_home_value_10_pctile))
-			.style("stroke-width", 3)
-			.style("stroke", color("home_value"))
-			.style("opacity", 1);
+		return text;
+	}
 
 
-		svg.append("circle")
-			.attr("id", "college2000")
-			.attr("class", "step7")
-			.attr("cx", x(2000))
-			.attr("cy", y(tract.pct_college_00_pctile))
-			.attr("r", pointRad)
-			.style("fill", color("college"))
-			.style("opacity", 1);
+	var svg = d3.select("#viz").append("svg")
+			.attr("width", size)
+			.attr("height", size+50);
 
-		svg.append("line")
-			.attr("id", "collegeThresh")
-			.attr("class", "step8")
-			.attr("x1", x(2000))
-			.attr("y1", y(tract.pct_college_00_pctile))
-			.attr("x2", x(2010))
-			.attr("y2", y(tract.pct_college_ref_pctile))
-			.style("stroke-width", 3)
-			.style("stroke", color("college"))
-			.style("stroke-dasharray", ("3, 3"))
-			.style("opacity", 0.5);
+	svg.append("rect")
+		.attr("width", size)
+		.attr("height", size)
+		.style("fill", "#FFFFFF")
 
-		svg.append("circle")
-			.attr("id", "college2010")
-			.attr("class", "step9")
-			.attr("cx", x(2010))
-			.attr("cy", y(tract.pct_college_10_pctile))
-			.attr("r", pointRad)
-			.style("fill", color("college"))
-			.style("opacity", 1);
-
-		svg.append("line")
-			.attr("id", "collegeLine")
-			.attr("class", "step9")
-			.attr("x1", x(2000))
-			.attr("y1", y(tract.pct_college_00_pctile))
-			.attr("x2", x(2010))
-			.attr("y2", y(tract.pct_college_10_pctile))
-			.style("stroke-width", 3)
-			.style("stroke", color("college"))
-			.style("opacity", 1);
-
-		svg.append("g")
-			.attr("class", "axis")
-			.attr("transform", "translate(0, "+(margin.top+figh)+")")
-			.call(xAxis);
-
-		svg.append("text")
-			.text("Census Year")
-			.style("text-anchor", "middle")
-			.style("font-weight", "bold")
-			.attr("transform", "translate("+(margin.left+width/2)+", "+(margin.top+figh+margin.bottom*2)+")");
+	var gtop = svg.append("g")
+		.attr("transform", "translate(" + (size / 2) + "," + (size / 2) + ")");
 
 
-		svg.append("g")
-			.attr("class", "axis")
-			.attr("transform", "translate("+(margin.left)+", 0)")
-			.call(yAxis);
+	gtop.append("circle")
+		.attr("x", 0)
+		.attr("y", 0)
+		.attr("r", radius-(thickness*(levels+2))+20)
+		.style("fill", "#666666")
 
-		svg.append("text")
-			.text("Percentile")
-			.style("text-anchor", "middle")
-			.style("font-weight", "bold")
-			.attr("transform", "translate(10, "+(height/2+margin.top)+"), rotate(-90)")
-			.attr("trans");
+	var hoverText = gtop
+		.append("text")
+			.attr("id", "summaryText")
+			.attr("x", -90)
+			.attr("y", -40)
+			.style("fill", "white");
 
-		if(showLegend) {
-			var legend = svg.append("g")
-				.attr("transform", "translate("+(width/4)+", "+(height+50)+")");
+	// var tractSpan = hoverText.append("tspan")
+	// 	.text("Tract: ")
+	// 	.append("tspan");
 
-			// legend.append("text").text("TESTING");
-			var lBoxSize = 20;
-			for(var i = 0; i < lines.length; i++) {
+	// var popSpan = hoverText.append("tspan")
+	// 	.text("Population: ")
+	// 	.attr("x", -90)
+	// 	.attr("dy", 20)
+	// 	.append("tspan");
+
+	var incomeSpan = hoverText.append("tspan")
+		.text("Income Level: ")
+		.attr("x", -90)
+		.attr("dy", 20)
+		.append("tspan");
+
+	var damageSpan = hoverText.append("tspan")
+		.text("Damage Level: ")
+		.attr("x", -90)
+		.attr("dy", 20)
+		.append("tspan");
+
+	var gentSpan = hoverText.append("tspan")
+		.text("Gentrification Status: ")
+		.attr("x", -90)
+		.attr("dy", 20)
+		.append("tspan");
+
+	var updateText = function(d) {
+		hoverText.style("display", "block");
+		// tractSpan.text(d.data.tract_id);
+		// popSpan.text(d.data.population_00);
+		incomeSpan.text(levelText(Math.floor(d.data.income_group)));
+		damageSpan.text(levelText(Math.floor(d.data.damage_level)));
+		gentSpan.text(d.data.gent_status);
+	}
+
+	var plot_ = function(tracts) {
+		var l1 = tracts.filter(function(d) { return d.damage_level == 1; });
+
+		var g1 = gtop.selectAll(".arc1")
+				.data(l1Pie(l1))
+			.enter().append("g")
+				.attr("class", "arc1 arc");
+
+		g1.append("path")
+			.attr("d", l1Arc);
+			// .on("mouseover", updateText)
+			// .on("mouseout", function(d) { hoverText.style("display", "none"); })
+			// .on("click", displayGentLines);
+
+		var drawIncomeLabelArc = function(income_group) {
+			var startAngle = getStartAngle(l1Pie(l1).filter(function(d) { return d.data.income_group == income_group; }));
+			var endAngle = getEndAngle(l1Pie(l1).filter(function(d) { return d.data.income_group == income_group; }));
+			
+			var labelArc = d3.arc()
+				.outerRadius(radius-(10 + thickness*(levels+1)))
+				.innerRadius(radius-(10 + thickness*(levels+1)))
+				.startAngle(startAngle)
+				.endAngle(endAngle);
+
+			gtop.append("path")
+				.attr("class", "incomeLabelArc")
+				.attr("id", "incomeLabelArc"+income_group)
+				.attr("d", labelArc)
+				.style("fill", "white");
+
+			gtop.append("text")
+					.style("fill", color(income_group))
+					.attr("text-anchor", "middle")
+				.append("textPath")
+					.attr("xlink:href", "#incomeLabelArc"+income_group)
+					.attr("startOffset", "25%")
+					.text(prettyIncomeText(income_group));
+		}
+
+		var incomeLabelArc = income_groups.forEach(function(d) { drawIncomeLabelArc(d); });
+
+		var drawDamageLabelArc = function(damage_level) {
+			var startAngle = -0.3;
+			var endAngle = 0.3;
+
+			var outerRadius = (radius - ((levels-damage_level)*(thickness+level_gap)));
+			var innerRadius = outerRadius-thickness;
+
+			var labelBGArc = d3.arc()
+				.outerRadius(outerRadius)
+				.innerRadius(innerRadius)
+				.startAngle(startAngle)
+				.endAngle(endAngle);
+
+			var labelArc = d3.arc()
+				.outerRadius(outerRadius-level_gap)
+				.innerRadius(innerRadius)
+				.startAngle(startAngle)
+				.endAngle(endAngle);
+
+			gtop.append("path")
+				.attr("class", "damageLabelBGArc")
+				.attr("id", "damageLabelBGArc"+damage_level)
+				.attr("d", labelBGArc)
+				.style("fill", "#555555");
+
+			gtop.append("path")
+				.attr("class", "damageLabelArc")
+				.attr("id", "damageLabelArc"+damage_level)
+				.attr("d", labelArc)
+				.style("fill", "none");
+
+			gtop.append("text")
+					.attr("text-anchor", "middle")
+					.style("font-weight", "bold")
+					.style("fill", "#EEEEEE")
+				.append("textPath")
+					.attr("xlink:href", "#damageLabelArc"+damage_level)
+					.attr("startOffset", "22%")
+					.attr("alignment-baseline", "text-before-edge")
+					.text(prettyDamageText(damage_level));
+		}
+
+		var damageLabelArc = damage_levels.forEach(function(d) { drawDamageLabelArc(d); })
+
+		var drawArc = function(damage_level, income_group) {
+			var startAngle = getStartAngle(l1Pie(l1).filter(function(d) { return d.data.income_group == income_group; }));
+			var l1EndAngle = getEndAngle(l1Pie(l1).filter(function(d) { return d.data.income_group == income_group; }));
+			var l1Pop = d3.sum(l1.filter(function(d) { return d.income_group == income_group; }), function(d) { return d.population_00; });
+
+			var lCur = tracts.filter(function(d) { return d.damage_level == damage_level && d.income_group == income_group; });
+			var lCurPop = d3.sum(lCur, function(d) { return d.population_00; });
+			var lCurScale = lCurPop / l1Pop;
+			var endAngle = (l1EndAngle - startAngle)*lCurScale + startAngle
+
+
+
+			var lCurArc = d3.arc()
+				.outerRadius(radius - ((levels-damage_level)*(thickness+level_gap)))
+				.innerRadius(radius - ((levels-damage_level)*(thickness+level_gap)) - thickness)
+
+			var lCurPie = d3.pie()
+				.sort(segmentSort)
+				.startAngle(startAngle)
+				.endAngle(endAngle)
+				.padAngle(0.004)
+				.value(function(d) { return d.population_00; });
+
+			var gCur = gtop.selectAll(".arc"+damage_level+income_group)
+					.data(lCurPie(lCur))
+				.enter().append("g")
+					.attr("class", "arc arc"+damage_level+income_group);
+
+			gCur.append("path")
+				.attr("d", lCurArc);
+				// .style("stroke-opacity", 1);
+				// .on("mouseover", updateText)
+				// .on("mouseout", function(d) { hoverText.style("display", "none"); })
+				// .on("click", displayGentLines);
+
+			// console.log(startAngle);
+			// console.log(endAngle);
+		}
+
+		var drawRing = function(damage_level) {
+			income_groups.forEach(function(d) { drawArc(damage_level, d)});
+		}
+
+		var rings = damage_levels
+			.filter(function(d) { return d > 1; })
+			.forEach(drawRing);
+
+		d3.selectAll(".arc")
+			.style("fill", function(d) { return color(d.data.income_group); })
+			.style("fill-opacity", function(d) { return opacity(d.data.gent_status); })
+			.style("stroke-opacity", 1)
+			.on("mouseover", function(d) {
+				updateText(d);
+				d3.select(this).style("cursor", "pointer");
+			})
+			.on("mouseout", function(d) {
+				hoverText.style("display", "none");
+				d3.select(this).style("cursor", "default");
+			})
+			.on("click", displayDetails);
+
+
+		var legend = svg.append("g")
+				// .attr("transform", "translate(0,"+(size-3*margin)+")");
+				.attr("transform", "translate("+(radius-50)+", "+(size-margin)+")");
+
+
+		var lBoxSize = 25;
+		for(var i = 0; i < gent_statuses.length; i++) {
+			lBoxY = i*(lBoxSize+5);
+			
+			for(var j = 0; j < income_groups.length; j++) {
+				lBoxX = j*lBoxSize;
+
 				legend.append("rect")
+					.attr("x", lBoxX)
+					.attr("y", lBoxY)
 					.attr("width", lBoxSize)
 					.attr("height", lBoxSize)
-					.attr("x", 0)
-					.attr("y", i*(lBoxSize+5))
-					.style("fill", color(lines[i]));
-				
-
-				legend.append("text")
-					.text(prettyLineText(lines[i]))
-					.attr("x", lBoxSize+10)
-					.attr("y", i*(lBoxSize+5)+lBoxSize-7)
-					.style("fill", color(lines[i]));
+					.style("fill", color(income_groups[j]))
+					.style("opacity", opacity(gent_statuses[i]));
 			}
+
+			legend.append("text")
+				.text(prettyGentrificationText(gent_statuses[i]))
+				.attr("x", lBoxSize*3+5)
+				.attr("y", lBoxY+lBoxSize-7);
+
+			// console.log(gent_statuses[i]);
 		}
 	}
 
-	var public = {
+	var callback_ = function(cbfunc) {
+		d3.selectAll(".arc")
+			.on("click", cbfunc);
+	}
+
+	public = {
 		"plot": plot_,
-		"tract": tract_,
-		"legend": showLegend_,
-		"selector": selector_,
-		"height": height_,
-		"width": width_
+		"callback": callback_
 	}
 
 	return public;
 }
 
-var size = 700;
-var thickness = 40;
-var margin = 50;
-var radius = (size)/2 - margin;
-var levels = 3;
-var level_gap = 10;
-var income_groups = [1, 2, 3];
-var damage_levels = [1, 2, 3]
-var gent_statuses = ["ineligible", "eligible", "gentrified"];
-
-var x = d3.scaleLinear()
-	.range([0, 2*Math.PI]);
-
-var y = d3.scaleSqrt()
-	.range([0, radius]);
-
-var color = d3.scaleOrdinal()
-	.range(["red", "purple", "blue"])
-	.domain(income_groups);
-
-var opacity = d3.scaleOrdinal()
-	.range([0.2, 0.5, 1.0])
-	.domain(gent_statuses);
-
-var l1Arc = d3.arc()
-	.outerRadius(radius - ((levels-1)*(thickness+level_gap)))
-	.innerRadius(radius - ((levels-1)*(thickness+level_gap)) - thickness)
-
-var segmentSort = function(a, b) {
-	return d3.ascending(a.income_group, b.income_group) || d3.descending(gent_statuses.indexOf(a.gent_status), gent_statuses.indexOf(b.gent_status)) || d3.ascending(a.population_00, b.population_00);
-}
-
-var l1Pie = d3.pie()
-	.sort(segmentSort)
-	.padAngle(0.004)
-	.startAngle(0.3)
-	.endAngle(2*Math.PI-0.3)
-	.value(function(d) { return d.population_00; });
-
-var getStartAngle = function(d) {
-	return d3.min(d, function(d) { return d.startAngle; });
-}
-
-var getEndAngle = function(d) {
-	return d3.max(d, function(d) { return d.endAngle; });
-}
-
-var prettyIncomeText = function(income_group) {
-	var text = "";
-	switch(income_group) {
-		case 1:
-			text = "Low Income Tracts";
-			break;
-		case 2:
-			text = "Middle Income Tracts";
-			break;
-		case 3:
-			text =  "High Income Tracts";
-			break;
-	}
-
-	return text;
-}
-
-var prettyDamageText = function(damage_level) {
-	var text = "";
-	switch(damage_level) {
-		case 1:
-			text = "Most Damage";
-			break;
-		case 2:
-			text = "Moderate Damage";
-			break;
-		case 3:
-			text = "Least Damage"
-	}
-
-	return text;
-}
-
-var prettyGentrificationText = function(gent_status) {
+var gentrificationStatusText = function(gent_status) {
 	var text = "";
 	switch(gent_status) {
-		case "ineligible":
-			text = "Not eligible to gentrify";
+		case "gentrified":
+			text = "gentrified";
 			break;
 		case "eligible":
-			text = "Eligible, but did not gentrify";
+			text = "eligible to gentrify, but did not do so";
 			break;
-		case "gentrified":
-			text = "Gentrified"
+		case "ineligible":
+			text = "ineligible to gentrify";
+			break;
 	}
 
 	return text;
 }
 
+var moneyFormat = function(num) {
+	return Number(num).toLocaleString("en-US", options={style: "currency", currency: "USD"});
+}
 
-var svg = d3.select("#viz").append("svg")
-		.attr("width", size)
-		.attr("height", size+50);
+var percentFormat = function(num) {
+	return Number(num/100).toLocaleString("en-US", options={style: "percent"});
+}
 
-svg.append("rect")
-	.attr("width", size)
-	.attr("height", size)
-	.style("fill", "#FFFFFF")
+var displayDetails = function(d) {
+	d3.select("#viz").selectAll("path").style("stroke", "none");
+	d3.select(this).select("path").style("stroke", "black");
 
-var gtop = svg.append("g")
-	.attr("transform", "translate(" + (size / 2) + "," + (size / 2) + ")");
+	d3.select("#tractID").select("span").html(d.data.tract_id);
+	d3.select("#status").select("span").html(gentrificationStatusText(d.data.gent_status));
 
+	d3.select("#gentrification")
+		.style("display", "none");
 
-gtop.append("circle")
-	.attr("x", 0)
-	.attr("y", 0)
-	.attr("r", radius-(thickness*(levels+2))+20)
-	.style("fill", "#666666")
+	var gentLines = gentrificationLines();
+	gentLines.height(300);
+	gentLines.selector("#gentrification");
+	gentLines.tract(d.data).legend(true);
+	gentLines.plot();
 
-var hoverText = gtop
-	.append("text")
-		.attr("id", "summaryText")
-		.attr("x", -90)
-		.attr("y", -40)
-		.style("fill", "white");
+	map.highlight(d.data.tract_id);
 
-var tractSpan = hoverText.append("tspan")
-	.text("Tract: ")
-	.append("tspan");
+	d3.select("#population_00")
+		.html(d.data.population_00);
+	d3.select("#population_10")
+		.html(d.data.population_10);
+	d3.select("#med_income_00")
+		.html(moneyFormat(d.data.med_income_00));
+	d3.select("#med_income_10")
+		.html(moneyFormat(d.data.med_income_10));
+	d3.select("#med_home_value_00")
+		.html(moneyFormat(d.data.med_home_value_00));
+	d3.select("#med_home_value_10")
+		.html(moneyFormat(d.data.med_home_value_10));
+	d3.select("#pct_college_00")
+		.html(percentFormat(d.data.pct_college_00));
+	d3.select("#pct_college_10")
+		.html(percentFormat(d.data.pct_college_10));
+	d3.select("#pct_white_00")
+		.html(percentFormat(d.data.pct_white_00));
+	d3.select("#pct_white_10")
+		.html(percentFormat(d.data.pct_white_10));
 
-var popSpan = hoverText.append("tspan")
-	.text("Population: ")
-	.attr("x", -90)
-	.attr("dy", 20)
-	.append("tspan");
-
-var incomeSpan = hoverText.append("tspan")
-	.text("Median Income: ")
-	.attr("x", -90)
-	.attr("dy", 20)
-	.append("tspan");
-
-var damageSpan = hoverText.append("tspan")
-	.text("Damage Level: ")
-	.attr("x", -90)
-	.attr("dy", 20)
-	.append("tspan");
-
-var gentSpan = hoverText.append("tspan")
-	.text("Gentrification Status: ")
-	.attr("x", -90)
-	.attr("dy", 20)
-	.append("tspan");
+	d3.select("#detail")
+		.style("display", "block");
+}
 
 var rowConverter = function(d) {
 	d.gent_eligible = d.gent_eligible === "TRUE";
@@ -543,198 +493,27 @@ var rowConverter = function(d) {
 	return d;
 }
 
-var updateText = function(d) {
-	hoverText.style("display", "block");
-	tractSpan.text(d.data.tract_id);
-	popSpan.text(d.data.population_00);
-	incomeSpan.text(Math.floor(d.data.med_income_00));
-	damageSpan.text(Math.floor(d.data.pct_damage) + "%");
-	gentSpan.text(d.data.gent_status);
-}
+// d3.json("data/nola_shape_projected.json",
 
-var gentLines = gentrificationLines();
-var displayGentLines = function(d) {
-	svg.selectAll("path").style("stroke", "none");
-	d3.select(this).select("path").style("stroke", "black");
-	gentLines.tract(d.data).legend(true);
-	gentLines.plot();
-}
+var radial = radialChart();
+var map = nola_map();
 
-d3.csv("data/nola_viz_data.csv", rowConverter, function(tracts) {
-	var l1 = tracts.filter(function(d) { return d.damage_level == 1; });
+d3.queue()
+.defer(d3.csv, "data/nola_viz_data.csv", rowConverter)
+.defer(d3.json, "data/nola_shape_projected.json")
+.await(function(error, tracts, nola) {
+// d3.csv("data/nola_viz_data.csv", rowConverter, function(tracts) {
+	radial.plot(tracts);
+	radial.callback(displayDetails);
+	map.features(nola.features);
+	map.plot();
 
-	var g1 = gtop.selectAll(".arc1")
-			.data(l1Pie(l1))
-		.enter().append("g")
-			.attr("class", "arc1 arc");
-
-	g1.append("path")
-		.attr("d", l1Arc);
-		// .on("mouseover", updateText)
-		// .on("mouseout", function(d) { hoverText.style("display", "none"); })
-		// .on("click", displayGentLines);
-
-	var drawIncomeLabelArc = function(income_group) {
-		var startAngle = getStartAngle(l1Pie(l1).filter(function(d) { return d.data.income_group == income_group; }));
-		var endAngle = getEndAngle(l1Pie(l1).filter(function(d) { return d.data.income_group == income_group; }));
-		
-		var labelArc = d3.arc()
-			.outerRadius(radius-(10 + thickness*(levels+1)))
-			.innerRadius(radius-(10 + thickness*(levels+1)))
-			.startAngle(startAngle)
-			.endAngle(endAngle);
-
-		gtop.append("path")
-			.attr("class", "incomeLabelArc")
-			.attr("id", "incomeLabelArc"+income_group)
-			.attr("d", labelArc)
-			.style("fill", "white");
-
-		gtop.append("text")
-				.style("fill", color(income_group))
-				.attr("text-anchor", "middle")
-			.append("textPath")
-				.attr("xlink:href", "#incomeLabelArc"+income_group)
-				.attr("startOffset", "25%")
-				.text(prettyIncomeText(income_group));
-	}
-
-	var incomeLabelArc = income_groups.forEach(function(d) { drawIncomeLabelArc(d); });
-
-	var drawDamageLabelArc = function(damage_level) {
-		var startAngle = -0.3;
-		var endAngle = 0.3;
-
-		var outerRadius = (radius - ((levels-damage_level)*(thickness+level_gap)));
-		var innerRadius = outerRadius-thickness;
-
-		var labelBGArc = d3.arc()
-			.outerRadius(outerRadius)
-			.innerRadius(innerRadius)
-			.startAngle(startAngle)
-			.endAngle(endAngle);
-
-		var labelArc = d3.arc()
-			.outerRadius(outerRadius-level_gap)
-			.innerRadius(innerRadius)
-			.startAngle(startAngle)
-			.endAngle(endAngle);
-
-		gtop.append("path")
-			.attr("class", "damageLabelBGArc")
-			.attr("id", "damageLabelBGArc"+damage_level)
-			.attr("d", labelBGArc)
-			.style("fill", "#555555");
-
-		gtop.append("path")
-			.attr("class", "damageLabelArc")
-			.attr("id", "damageLabelArc"+damage_level)
-			.attr("d", labelArc)
-			.style("fill", "none");
-
-		gtop.append("text")
-				.attr("text-anchor", "middle")
-				.style("font-weight", "bold")
-				.style("fill", "#EEEEEE")
-			.append("textPath")
-				.attr("xlink:href", "#damageLabelArc"+damage_level)
-				.attr("startOffset", "22%")
-				.attr("alignment-baseline", "text-before-edge")
-				.text(prettyDamageText(damage_level));
-	}
-
-	var damageLabelArc = damage_levels.forEach(function(d) { drawDamageLabelArc(d); })
-
-	var drawArc = function(damage_level, income_group) {
-		var startAngle = getStartAngle(l1Pie(l1).filter(function(d) { return d.data.income_group == income_group; }));
-		var l1EndAngle = getEndAngle(l1Pie(l1).filter(function(d) { return d.data.income_group == income_group; }));
-		var l1Pop = d3.sum(l1.filter(function(d) { return d.income_group == income_group; }), function(d) { return d.population_00; });
-
-		var lCur = tracts.filter(function(d) { return d.damage_level == damage_level && d.income_group == income_group; });
-		var lCurPop = d3.sum(lCur, function(d) { return d.population_00; });
-		var lCurScale = lCurPop / l1Pop;
-		var endAngle = (l1EndAngle - startAngle)*lCurScale + startAngle
-
-
-
-		var lCurArc = d3.arc()
-			.outerRadius(radius - ((levels-damage_level)*(thickness+level_gap)))
-			.innerRadius(radius - ((levels-damage_level)*(thickness+level_gap)) - thickness)
-
-		var lCurPie = d3.pie()
-			.sort(segmentSort)
-			.startAngle(startAngle)
-			.endAngle(endAngle)
-			.padAngle(0.004)
-			.value(function(d) { return d.population_00; });
-
-		var gCur = gtop.selectAll(".arc"+damage_level+income_group)
-				.data(lCurPie(lCur))
-			.enter().append("g")
-				.attr("class", "arc arc"+damage_level+income_group);
-
-		gCur.append("path")
-			.attr("d", lCurArc);
-			// .style("stroke-opacity", 1);
-			// .on("mouseover", updateText)
-			// .on("mouseout", function(d) { hoverText.style("display", "none"); })
-			// .on("click", displayGentLines);
-
-		// console.log(startAngle);
-		// console.log(endAngle);
-	}
-
-	var drawRing = function(damage_level) {
-		income_groups.forEach(function(d) { drawArc(damage_level, d)});
-	}
-
-	var rings = damage_levels
-		.filter(function(d) { return d > 1; })
-		.forEach(drawRing);
-
-	d3.selectAll(".arc")
-		.style("fill", function(d) { return color(d.data.income_group); })
-		.style("fill-opacity", function(d) { return opacity(d.data.gent_status); })
-		.style("stroke-opacity", 1)
-		.on("mouseover", function(d) {
-			updateText(d);
-			d3.select(this).style("cursor", "pointer");
-		})
-		.on("mouseout", function(d) {
-			hoverText.style("display", "none");
-			d3.select(this).style("cursor", "default");
-		})
-		.on("click", displayGentLines);
-
-
-	var legend = svg.append("g")
-			// .attr("transform", "translate(0,"+(size-3*margin)+")");
-			.attr("transform", "translate("+(radius-50)+", "+(size-margin)+")");
-
-
-	var lBoxSize = 25;
-	for(var i = 0; i < gent_statuses.length; i++) {
-		lBoxY = i*(lBoxSize+5);
-		
-		for(var j = 0; j < income_groups.length; j++) {
-			lBoxX = j*lBoxSize;
-
-			legend.append("rect")
-				.attr("x", lBoxX)
-				.attr("y", lBoxY)
-				.attr("width", lBoxSize)
-				.attr("height", lBoxSize)
-				.style("fill", color(income_groups[j]))
-				.style("opacity", opacity(gent_statuses[i]));
-		}
-
-		legend.append("text")
-			.text(prettyGentrificationText(gent_statuses[i]))
-			.attr("x", lBoxSize*3+5)
-			.attr("y", lBoxY+lBoxSize-7);
-
-		// console.log(gent_statuses[i]);
-	}
+	d3.select("#why")
+		.on("click", function() {
+			d3.select("#gentrification")
+				.style("display", "block");
+		});
+	
 	// gent_statuses.forEach(function(gent) {
 	// 	var y = 
 	// });

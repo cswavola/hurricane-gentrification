@@ -13,7 +13,11 @@
 
 #detail {
 	float: left;
-	display: block;
+	display: none;
+}
+
+#detail #gentrification {
+	display: none;
 }
 
 #sections {
@@ -76,4 +80,8 @@ h3 {
 
 #overlay span.college {
 	color: orange;
+}
+
+th, td {
+	padding: 2px 5px 2px 5px;
 }
