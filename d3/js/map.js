@@ -27,7 +27,7 @@ var nola_map = function() {
 
 	var highlight_ = function(geoid) {
 		svg.selectAll(".tract").attr("fill", function(d) {
-			console.log(d);
+			// console.log(d);
 			if(d.properties.GEOID == geoid) return fillHighlight; else return fill;
 		});
 	}

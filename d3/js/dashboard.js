@@ -503,9 +503,10 @@ d3.queue()
 .defer(d3.json, "data/nola_shape_projected.json")
 .await(function(error, tracts, nola) {
 // d3.csv("data/nola_viz_data.csv", rowConverter, function(tracts) {
+	console.log(nola.features.filter(function(d) { return d.properties.ALAND != "0"; }));
 	radial.plot(tracts);
 	radial.callback(displayDetails);
-	map.features(nola.features);
+	map.features(nola.features.filter(function(d) { return d.properties.ALAND != "0"; }));
 	map.plot();
 
 	d3.select("#why")
