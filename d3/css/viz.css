@@ -13,11 +13,36 @@
 
 #detail {
 	float: left;
+	margin-top: 100px;
 	display: none;
 }
 
 #detail #gentrification {
 	display: none;
+}
+
+#detail #topLeft {
+	background-color: #fbb4ae;
+	position: fixed;
+	width: 220px;
+	height: 120px;
+	padding: 10px;
+}
+
+#detail #map {
+	position: fixed;
+}
+
+
+#detail #bottomRight {
+	background-color: #b3cde3;
+	position: fixed;
+	width: 350px;
+	height: 150px;
+	padding: 10px;
+	left: 1000px;
+	top: 475px;
+	font-size: 12px;
 }
 
 #sections {
