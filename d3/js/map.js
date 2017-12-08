@@ -7,8 +7,8 @@ var nola_map = function() {
 	var path = d3.geoPath()
 	var features = null;
 	var stroke = "white";
-	var fill = "#DDDDDD";
-	var fillHighlight = "#4daf4a";
+	var fill = "#CCCCCC";
+	var fillHighlight = "#06BC40";
 
 	var plot_ = function() {
 		svg = d3.select(selector).append("svg")
@@ -27,12 +27,12 @@ var nola_map = function() {
 
 		svg.append("polygon")
 			.attr("id", "tractArrow1")
-			.attr("fill", "#fbb4ae")
+			.attr("fill", "#F8B619")
 			.attr("points", "100, 60 100,70 120,60");
 
 		svg.append("polygon")
 			.attr("id", "tractArrow2")
-			.attr("fill", "#b3cde3")
+			.attr("fill", "#600F97")
 			.attr("points", "520,400 520,390 480,410");
 
 

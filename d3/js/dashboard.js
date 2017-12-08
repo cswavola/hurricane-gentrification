@@ -17,6 +17,7 @@ var radialChart = function() {
 
 	var color = d3.scaleOrdinal()
 		.range(["red", "purple", "blue"])
+		// .range(["#F8B619","#06BC40","#600F97"])
 		.domain(income_groups);
 
 	var opacity = d3.scaleOrdinal()
@@ -29,6 +30,7 @@ var radialChart = function() {
 
 	var segmentSort = function(a, b) {
 		return d3.ascending(a.income_group, b.income_group) || d3.descending(gent_statuses.indexOf(a.gent_status), gent_statuses.indexOf(b.gent_status)) || d3.ascending(a.population_00, b.population_00);
+		// return d3.ascending(a.income_group, b.income_group) || d3.descending(gent_statuses.indexOf(a.gent_status), gent_statuses.indexOf(b.gent_status)) || d3.ascending(a.abandoned, b.abandoned) || d3.ascending(a.population_00, b.population_00);
 	}
 
 	var l1Pie = d3.pie()
@@ -176,6 +178,19 @@ var radialChart = function() {
 	}
 
 	var plot_ = function(tracts) {
+		var pattern = gtop.append("defs")
+			.append("pattern")
+				.attr("id", "diagonalHatch")
+				.attr("patternUnits", "userSpaceOnUse")
+				.attr("width", 4)
+				.attr("height", 4)
+			.append("path")
+				.attr('d', 'M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2')
+			    .attr('stroke', '#000000')
+			    .attr('stroke-width', 1);
+			// .append("rect");
+			// 	.attr({ width:"4", height:"8", transform:"translate(0,0)", fill:"#88AAEE" });
+
 		var l1 = tracts.filter(function(d) { return d.damage_level == 1; });
 
 		var g1 = gtop.selectAll(".arc1")
@@ -308,12 +323,21 @@ var radialChart = function() {
 			.forEach(drawRing);
 
 		d3.selectAll(".arc")
-			.style("fill", function(d) { return color(d.data.income_group); })
+			.style("fill", function(d) {
+				// if(d.data.abandoned) {
+				// 	return "black";
+				// } else {
+				// 	return color(d.data.income_group);
+				// }
+				return color(d.data.income_group);
+				// return "url(#diagonalHatch)";
+			})
 			.style("fill-opacity", function(d) { return opacity(d.data.gent_status); })
 			.style("stroke-opacity", 1)
 			.on("mouseover", function(d) {
 				updateText(d);
 				d3.select(this).style("cursor", "pointer");
+				console.log(d.data.abandoned);
 			})
 			.on("mouseout", function(d) {
 				hoverText.style("display", "none");
@@ -474,6 +498,12 @@ var rowConverter = function(d) {
 	d.population_change_pctile = parseInt(d.population_change_pctile);
 
 	d.pct_damage = parseFloat(d.pct_damage);
+
+	if(d.population_10/d.population_00 <= 0.5) {
+		d.abandoned = true;
+	} else {
+		d.abandoned = false;
+	}
 
 	if(d.med_income_00_pctile <= 33) {
 		d.income_group = 1;

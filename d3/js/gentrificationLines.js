@@ -298,23 +298,31 @@ var gentrificationLines = function() {
 
 		if(showLegend) {
 			var legend = svg.append("g")
-				.attr("transform", "translate("+(width+15)+", "+(height/3)+")");
+				.attr("transform", "translate("+(width+7)+", "+(height/3+5)+")");
+
+			legend.append("rect")
+				.attr("width", 217)
+				.attr("height", 91)
+				.style("fill", "white")
+				.style("stroke", "black")
+				.style("stroke-width", 2);
 
 			// legend.append("text").text("TESTING");
 			var lBoxSize = 20;
+			var lBoxMargin = 10;
 			for(var i = 0; i < lines.length; i++) {
 				legend.append("rect")
 					.attr("width", lBoxSize)
 					.attr("height", lBoxSize)
-					.attr("x", 0)
-					.attr("y", i*(lBoxSize+5))
+					.attr("x", lBoxMargin)
+					.attr("y", lBoxMargin+i*(lBoxSize+5))
 					.style("fill", color(lines[i]));
 				
 
 				legend.append("text")
 					.text(prettyLineText(lines[i]))
-					.attr("x", lBoxSize+10)
-					.attr("y", i*(lBoxSize+5)+lBoxSize-7)
+					.attr("x", lBoxSize+lBoxMargin+10)
+					.attr("y", lBoxMargin+i*(lBoxSize+5)+lBoxSize-7)
 					.style("fill", color(lines[i]));
 			}
 		}

@@ -22,7 +22,7 @@
 }
 
 #detail #topLeft {
-	background-color: #fbb4ae;
+	background-color: #F8B619;
 	position: fixed;
 	width: 220px;
 	height: 120px;
@@ -35,11 +35,12 @@
 
 
 #detail #bottomRight {
-	background-color: #b3cde3;
+	background-color: #600F97;
+	color: white;
 	position: fixed;
 	width: 350px;
-	height: 150px;
-	padding: 10px;
+	height: 142px;
+	/*padding: 10px;*/
 	left: 1000px;
 	top: 475px;
 	font-size: 12px;
@@ -107,6 +108,15 @@ h3 {
 	color: orange;
 }
 
+/*tr {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}*/
+
 th, td {
-	padding: 2px 5px 2px 5px;
+	padding: 4px 8px 4px 8px;
+}
+
+th.colorOffset, td.colorOffset {
+	background-color: #1E0944;
 }
