@@ -7,8 +7,8 @@ var nola_map = function() {
 	var path = d3.geoPath()
 	var features = null;
 	var stroke = "white";
-	var fill = "#CCCCCC";
-	var fillHighlight = "#ccebc5";
+	var fill = "#DDDDDD";
+	var fillHighlight = "#4daf4a";
 
 	var plot_ = function() {
 		svg = d3.select(selector).append("svg")
@@ -23,10 +23,24 @@ var nola_map = function() {
 				.attr("stroke", stroke)
 				.attr("stroke-width", 2)
 				.attr("fill", fill);
+				// .on("click", function(d) { highlight_(d.properties.GEOID); });
+
+		svg.append("polygon")
+			.attr("id", "tractArrow1")
+			.attr("fill", "#fbb4ae")
+			.attr("points", "100, 60 100,70 120,60");
+
+		svg.append("polygon")
+			.attr("id", "tractArrow2")
+			.attr("fill", "#b3cde3")
+			.attr("points", "520,400 520,390 480,410");
+
+
 	}
 
 	var highlight_ = function(geoid) {
 		svg.selectAll(".tract")
+			.transition(500)
 			.attr("fill", function(d) {
 				// console.log(d);
 				if(d.properties.GEOID == geoid) return fillHighlight; else return fill;
@@ -34,26 +48,33 @@ var nola_map = function() {
 
 		f = features.filter(function(d) { return d.properties.GEOID == geoid; })[0];
 		console.log(f);
-		svg.select("#selectedCentroid").remove();
-		svg.select("#tractArrow1").remove();
-		svg.select("#tractArrow2").remove();
+		// svg.select("#selectedCentroid").remove();
+		// svg.select("#tractArrow1").remove();
+		// svg.select("#tractArrow2").remove();
 
-		svg.append("circle")
-			.attr("id", "selectedCentroid")
-			.attr("fill", "blue")
-			.attr("cx", f.properties.centroid[0])
-			.attr("cy", f.properties.centroid[1])
-			.attr("r", 3);
+		// svg.append("circle")
+		// 	.attr("id", "selectedCentroid")
+		// 	.attr("fill", "blue")
+		// 	.attr("cx", f.properties.centroid[0])
+		// 	.attr("cy", f.properties.centroid[1])
+		// 	.attr("r", 3);
 
-		svg.append("polygon")
-			.attr("id", "tractArrow1")
-			.attr("fill", "#fbb4ae")
+		svg.select("#tractArrow1")
+			.transition(500)
 			.attr("points", f.properties.centroid[0]+","+f.properties.centroid[1]+" 100,70 120,60");
 
-		svg.append("polygon")
-			.attr("id", "tractArrow2")
-			.attr("fill", "#b3cde3")
+		svg.select("#tractArrow2")
+			.transition(500)
 			.attr("points", f.properties.centroid[0]+","+f.properties.centroid[1]+" 520,390 480,410");
+		// svg.append("polygon")
+		// 	.attr("id", "tractArrow1")
+		// 	.attr("fill", "#fbb4ae")
+		// 	.attr("points", f.properties.centroid[0]+","+f.properties.centroid[1]+" 100,70 120,60");
+
+		// svg.append("polygon")
+		// 	.attr("id", "tractArrow2")
+		// 	.attr("fill", "#b3cde3")
+		// 	.attr("points", f.properties.centroid[0]+","+f.properties.centroid[1]+" 520,390 480,410");
 	}
 
 	var features_ = function(_) {

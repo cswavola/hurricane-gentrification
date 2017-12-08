@@ -391,6 +391,7 @@ var percentFormat = function(num) {
 }
 
 var displayDetails = function(d) {
+	hideGentChart();
 	d3.select("#viz").selectAll("path").style("stroke", "none");
 	d3.select(this).select("path").style("stroke", "black");
 
@@ -401,7 +402,7 @@ var displayDetails = function(d) {
 		.style("display", "none");
 
 	var gentLines = gentrificationLines();
-	gentLines.height(300);
+	gentLines.height(380);
 	gentLines.selector("#gentrification");
 	gentLines.tract(d.data).legend(true);
 	gentLines.plot();
@@ -495,6 +496,16 @@ var rowConverter = function(d) {
 
 // d3.json("data/nola_shape_projected.json",
 
+var hideGentChart = function() {
+	d3.select("#gentrification")
+		.style("display", "none")
+		.select("#closeButton").remove();
+	d3.select("#topLeft")
+		.transition(500)
+			.style("width", "220px")
+			.style("height", "120px");
+}
+
 var radial = radialChart();
 var map = nola_map();
 
@@ -510,14 +521,23 @@ d3.queue()
 
 	d3.select("#why")
 		.on("click", function() {
-
 			d3.select("#topLeft")
 				.transition(500)
-				.style("width", "425px")
-				.style("height", "550px")
+				.style("width", "650px")
+				.style("height", "475px")
 				.on("end", function() {
 					d3.select("#gentrification")
-						.style("display", "block");
+						.style("display", "block")
+						.select("svg").append("text")
+							.attr("id", "closeButton")
+							.attr("x", 565)
+							.attr("y", 377)
+							.style("fill", "black")
+							.text("[x] close")
+								.on("click", hideGentChart)
+								.on("mouseover", function(d) {
+									d3.select(this).style("cursor", "pointer");
+								});
 				});
 		});
 	

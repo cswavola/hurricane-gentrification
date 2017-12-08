@@ -12,10 +12,10 @@ var gentrificationLines = function() {
 	var figh = height-margin.top-margin.bottom;
 	var figw = width-margin.left-margin.right;
 
-	var colors = {"income": "green", "home_value": "magenta", "college": "orange"};
+	var colors = {"income": "#1b9e77", "home_value": "#d95f02", "college": "#7570b3"};
 	var lines = ["income", "home_value", "college"];
 	var color = d3.scaleOrdinal()
-		.range(["green", "magenta", "orange"])
+		.range(["#1b9e77", "#d95f02", "#7570b3"])
 		.domain(lines);
 
 	// Keep track of which visualization
@@ -128,8 +128,8 @@ var gentrificationLines = function() {
 		d3.select(selector).selectAll("svg").remove();
 
 		svg = d3.select(selector).append("svg")
-			.attr("height", height+(showLegend*150))
-			.attr("width", width);
+			.attr("height", height)
+			.attr("width", width+(showLegend*350));
 
 		svg.append("rect")
 			.attr("id", "incThreshRect")
@@ -298,7 +298,7 @@ var gentrificationLines = function() {
 
 		if(showLegend) {
 			var legend = svg.append("g")
-				.attr("transform", "translate("+(width/4)+", "+(height+50)+")");
+				.attr("transform", "translate("+(width+15)+", "+(height/3)+")");
 
 			// legend.append("text").text("TESTING");
 			var lBoxSize = 20;
