@@ -634,4 +634,6 @@ d3.queue()
 			});
 	});
 
+	var detail = d3.select("#detail");
+	console.log(window.innerWidth);
 });

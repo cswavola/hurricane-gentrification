@@ -14,7 +14,9 @@
 #detail {
 	float: left;
 	margin-top: 100px;
+	width: 650px;
 	display: block;
+	position: relative;
 }
 
 #detail #gentrification {
@@ -23,26 +25,32 @@
 
 #detail #topLeft {
 	background-color: #F8B619;
-	position: fixed;
+	/*position: fixed;*/
+	position: absolute;
 	width: 220px;
 	height: 120px;
 	padding: 10px;
 }
 
 #detail #map {
-	position: fixed;
+	/*position: fixed;*/
+	position: relative;
+	float: left;
 }
 
 
 #detail #bottomRight {
 	background-color: #600F97;
 	color: white;
-	position: fixed;
+	/*position: fixed;*/
+	position: absolute;
 	width: 350px;
+	right: 0px;
+	top: 320px;
 	/*height: 142px;*/
 	/*padding: 10px;*/
-	left: 1000px;
-	top: 475px;
+	/*left: 1000px;*/
+	/*top: 475px;*/
 	font-size: 12px;
 }
 
