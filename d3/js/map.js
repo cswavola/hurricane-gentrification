@@ -27,13 +27,32 @@ var nola_map = function() {
 
 		svg.append("polygon")
 			.attr("id", "tractArrow1")
+			.attr("class", "detailAnnotations")
 			.attr("fill", "#F8B619")
 			.attr("points", "100, 60 100,70 120,60");
 
 		svg.append("polygon")
 			.attr("id", "tractArrow2")
+			.attr("class", "detailAnnotations")
 			.attr("fill", "#600F97")
 			.attr("points", "520,400 520,390 480,410");
+
+		svg.append("rect")
+			.attr("class", "initialOverlay")
+			.attr("width", 650)
+			.attr("height", 475)
+			.style("fill", "white")
+			.style("opacity", 0.8)
+			.append("text")
+				.text("asdf")
+				.style("fill", "black");
+
+		svg.append("text")
+			.attr("class", "initialOverlay")
+			.text("Click any colored region on the left to begin.")
+			.style("fill", "black")
+			.attr("x", 325).attr("y", 237)
+			.attr("text-anchor", "middle");
 
 
 	}

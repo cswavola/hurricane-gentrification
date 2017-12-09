@@ -101,10 +101,10 @@ var radialChart = function() {
 		var text = "";
 		switch(gent_status) {
 			case "ineligible":
-				text = "Not eligible to gentrify";
+				text = "Ineligible to gentrify";
 				break;
 			case "eligible":
-				text = "Eligible, but did not gentrify";
+				text = "Eligible, did not gentrify";
 				break;
 			case "gentrified":
 				text = "Gentrified"
@@ -348,12 +348,16 @@ var radialChart = function() {
 
 		var legend = svg.append("g")
 				// .attr("transform", "translate(0,"+(size-3*margin)+")");
-				.attr("transform", "translate("+(radius-50)+", "+(size-margin)+")");
+				.attr("transform", "translate(10, 550)");
 
+		legend.append("text")
+			.text("Chart Key")
+			.style("font-weight", "bold");
 
 		var lBoxSize = 25;
+		var lBoxTopPad = 5
 		for(var i = 0; i < gent_statuses.length; i++) {
-			lBoxY = i*(lBoxSize+5);
+			lBoxY = lBoxTopPad+i*(lBoxSize+5);
 			
 			for(var j = 0; j < income_groups.length; j++) {
 				lBoxX = j*lBoxSize;
@@ -425,11 +429,17 @@ var displayDetails = function(d) {
 	d3.select("#gentrification")
 		.style("display", "none");
 
+	d3.selectAll(".initialOverlay")
+		.style("display", "none");
+
 	var gentLines = gentrificationLines();
 	gentLines.height(380);
 	gentLines.selector("#gentrification");
 	gentLines.tract(d.data).legend(true);
 	gentLines.plot();
+
+	d3.selectAll(".detailAnnotations")
+		.style("opacity", 1);
 
 	map.highlight(d.data.tract_id);
 
@@ -453,6 +463,7 @@ var displayDetails = function(d) {
 		.html(percentFormat(d.data.pct_white_00));
 	d3.select("#pct_white_10")
 		.html(percentFormat(d.data.pct_white_10));
+
 
 	d3.select("#detail")
 		.style("display", "block");

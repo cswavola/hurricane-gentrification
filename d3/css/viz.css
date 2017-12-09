@@ -14,7 +14,7 @@
 #detail {
 	float: left;
 	margin-top: 100px;
-	display: none;
+	display: block;
 }
 
 #detail #gentrification {
@@ -39,11 +39,16 @@
 	color: white;
 	position: fixed;
 	width: 350px;
-	height: 142px;
+	/*height: 142px;*/
 	/*padding: 10px;*/
 	left: 1000px;
 	top: 475px;
 	font-size: 12px;
+}
+
+
+.detailAnnotations {
+	opacity: 0;
 }
 
 #sections {
