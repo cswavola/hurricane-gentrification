@@ -46,8 +46,8 @@ var radialChart = function() {
 		.innerRadius(radius - ((levels-1)*(thickness+level_gap)) - thickness)
 
 	var segmentSort = function(a, b) {
-		return d3.ascending(a.income_group, b.income_group) || d3.descending(gent_statuses.indexOf(a.gent_status), gent_statuses.indexOf(b.gent_status)) || d3.ascending(a.population_00, b.population_00);
-		// return d3.ascending(a.income_group, b.income_group) || d3.descending(gent_statuses.indexOf(a.gent_status), gent_statuses.indexOf(b.gent_status)) || d3.ascending(a.abandoned, b.abandoned) || d3.ascending(a.population_00, b.population_00);
+		// return d3.ascending(a.income_group, b.income_group) || d3.descending(gent_statuses.indexOf(a.gent_status), gent_statuses.indexOf(b.gent_status)) || d3.ascending(a.population_00, b.population_00);
+		return d3.ascending(a.income_group, b.income_group) || d3.descending(gent_statuses.indexOf(a.gent_status), gent_statuses.indexOf(b.gent_status)) || d3.ascending(a.abandoned, b.abandoned) || d3.ascending(a.population_00, b.population_00);
 	}
 
 	var l1Pie = d3.pie()
@@ -111,7 +111,7 @@ var radialChart = function() {
 		return text;
 	}
 
-	var levelText = function(level) {
+	var incomeLevelText = function(level) {
 		var text = "";
 		switch(level) {
 			case 1:
@@ -121,6 +121,22 @@ var radialChart = function() {
 				text = "Medium";
 				break;
 			case 3:
+				text = "High";
+				break;
+		}
+		return text;
+	}
+
+	var damageLevelText = function(level) {
+		var text = "";
+		switch(level) {
+			case 3:
+				text = "Low";
+				break;
+			case 2:
+				text = "Medium";
+				break;
+			case 1:
 				text = "High";
 				break;
 		}
@@ -196,8 +212,8 @@ var radialChart = function() {
 			hoverText.style("display", "block");
 			// tractSpan.text(d.data.tract_id);
 			// popSpan.text(d.data.population_00);
-			incomeSpan.text(levelText(Math.floor(d.data.income_group)));
-			damageSpan.text(levelText(Math.floor(d.data.damage_level)));
+			incomeSpan.text(incomeLevelText(Math.floor(d.data.income_group)));
+			damageSpan.text(damageLevelText(Math.floor(d.data.damage_level)));
 			gentSpan.text(d.data.gent_status);
 		}
 
@@ -379,15 +395,21 @@ var radialChart = function() {
 
 		d3.selectAll(".arc")
 			.style("fill", function(d) {
-				// if(d.data.abandoned) {
-				// 	return "black";
-				// } else {
-				// 	return color(d.data.income_group);
-				// }
+				if(d.data.abandoned) {
+					return "#777777";
+				} else {
+					return color(d.data.income_group);
+				}
 				return color(d.data.income_group);
 				// return "url(#diagonalHatch)";
 			})
-			.style("fill-opacity", function(d) { return opacity(d.data.gent_status); })
+			.style("fill-opacity", function(d) {
+				if(d.data.abandoned) {
+					return 1;
+				} else {
+					return opacity(d.data.gent_status);
+				}
+			})
 			.style("stroke-opacity", 1)
 			.on("mouseover", function(d) {
 				updateText(d);
@@ -434,6 +456,40 @@ var radialChart = function() {
 
 				// console.log(gent_statuses[i]);
 			}
+
+			lBoxY = lBoxTopPad+income_groups.length*(lBoxSize+5);
+			lBoxX = 0;
+			legend.append("rect")
+				.attr("x", lBoxX)
+				.attr("y", lBoxY)
+				.attr("width", lBoxSize*3)
+				.attr("height", lBoxSize)
+				.style("fill", "#777777");
+			legend.append("text")
+				.text("Abandoned")
+				.attr("x", lBoxSize*3+5)
+				.attr("y", lBoxY+lBoxSize-7);
+
+			// lBoxY = lBoxTopPad+i*(lBoxSize+5);
+				
+			// 	for(var j = 0; j < income_groups.length; j++) {
+			// 		lBoxX = j*lBoxSize;
+
+			// 		legend.append("rect")
+			// 			.attr("x", lBoxX)
+			// 			.attr("y", lBoxY)
+			// 			.attr("width", lBoxSize)
+			// 			.attr("height", lBoxSize)
+			// 			.style("fill", color(income_groups[j]))
+			// 			.style("opacity", opacity(gent_statuses[i]));
+			// 	}
+
+			// 	legend.append("text")
+			// 		.text(prettyGentrificationText(gent_statuses[i]))
+			// 		.attr("x", lBoxSize*3+5)
+			// 		.attr("y", lBoxY+lBoxSize-7);
+
+			// 	// console.log(gent_statuses[i]);
 		}
 
 		if(scroller) {
