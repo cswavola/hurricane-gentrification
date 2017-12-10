@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Arcs</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/viz.css">
+  </head>
+  <body>
+    <div id="header">
+      <h3>Economics of a Hurricane</h3>
+      <div id="links">
+        <a href="index.html" class="active">Introduction</a>
+        <a href="gentrification.html">What is Gentrification?</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="sources.html">Sources</a>
+      </div>
+    </div>
+    <div id="master">
+      <div id="sections">
+        <section class="step">
+          <h1>Understanding the impact: A view of the city</h1>
+          <p>
+            Our analysis breaks up the city of New Orleans into its Census tracts to process financial and demographic data. However, rather than displaying by location, we organized the communities in a different way.
+          </p>
+        </section>
+        <section class="step">
+          Here we have the central organization of the chart- you can view this as the "impact center," where damage to communities increases as you approach the middle circle.
+        </section>
+        <section class="step">
+          Here is a sample of the communities. You can see communities with different statuses related to their recovery. The darker the community, the more vulnerable it was to upheaval. Some were abandoned (the striped boxes), some were gentrified (dark red), and some were vulnerable to population turnover but remained ungentrified (medium red).
+        </section>
+        <section class="step">
+          These variations appear at all damage levels...
+        </section>
+        <section class="step">
+          ...and across multiple income levels.
+        </section>
+        <section class="step">
+          Were our recovery efforts enough to protect and rebuild vulnerable communities?
+        </section>
+      </div>
+      <div id="lineviz">
+      </div>
+    </div>
+    <script src="http://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/d3-color.v1.min.js"></script>
+    <script src="https://d3js.org/d3-dispatch.v1.min.js"></script>
+    <script src="https://d3js.org/d3-ease.v1.min.js"></script>
+    <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+    <script src="https://d3js.org/d3-selection.v1.min.js"></script>
+    <script src="https://d3js.org/d3-timer.v1.min.js"></script>
+    <script src="https://d3js.org/d3-transition.v1.min.js"></script>
+    <script src="js/scroller.js"></script>
+    <script src="js/gentrification.js"></script>
+  </body>
+</html>

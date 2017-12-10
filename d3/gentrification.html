@@ -3,44 +3,74 @@
   <head>
     <meta charset="utf-8">
     <title>Arcs</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">    
+    <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/viz.css">
   </head>
   <body>
+    <div id="header">
+      <h3>Economics of a Hurricane</h3>
+      <div id="links">
+        <a href="index.html">Introduction</a>
+        <a href="gentrification.html" class="active">What is Gentrification?</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="sources.html">Sources</a>
+      </div>
+    </div>
     <div id="master">
       <div id="sections">
-        <section class="step">
+        <section class="step stepFirst">
           <h1>How can we measure gentrification?</h1>
           <p>
-            Gentrification can be a somewhat nebulous concept, but for the sake of consistency, we use the following methodology, from <a href="http://www.governing.com/gov-data/gentrification-report-methodology.html">governing.com</a>, to provide a specific definition.
+            Gentrification is the process of fiscal transformation of a community in an affluent direction. The process itself does not depend on a specific event, but to be described as "gentrified" a community would experience these changes in a relatively brief period of time. In this analysis, we use the financial markers to determine gentrification status and eligibility&mdash;based on the methodology from <a href="http://www.governing.com/gov-data/gentrification-report-methodology.html">governing.com</a>.
           </p>
         </section>
         <section class="step">
-          To be eligible for gentrification, a tract's median income in 2000 must be below the 40th percentile.
+          <h2>Eligibility</h2>
+          <p>
+            To be <b>eligible</b> for gentrification, a tract must start the decade at an economic disadvantage. As a formal measure, we consider a tract eligible if both the median household income and median home value in 2000 are below the 40th percentile for the surrounding city, like the community represented here.
+          </p>
         </section>
         <section class="step">
-          This tract has a starting income below the threshold, so it is eligible.
+          <p>
+            In the long run, a gentrified area's median income is expected to rise. However, income can lag behind other metrics, and may not show signs of long-term growth in the first ten years, so we rely on other predictors of eventual income growth, and only use income directly to verify eligibility.
+          </p>
         </section>
         <section class="step">
-          Over 10 years, the median income rises considerably, but income change can be lagged, so it is not used as an indicator of gentrification.
+          <h2>Gentrification</h2>
+          <p>
+            In the place of income, this analysis uses the home value and educational attainment as financial indicators to evaluate growth of a locality, as these metrics tend to be leading indicators of growth, rather then lagging indicators.
+          </p>
+          <h3>Home Value</h3>
+          <p>
+            As we saw when evaluating eligibility, this community already has a fairly low median home value, leaving it plenty of room for growth. The dashed line shows an average rate of home value increase—the 50th percentile of growth rates in the city.
+          </p>
         </section>
         <section class="step">
-          To be considered gentrified, a tract must show significant growth in median home value (adjusted for inflation). In this tract, the median value is relatively low, leaving room to grow.
+          <p>
+            Regardless of its starting point, to be considered <b>gentrified</b>, a tract must show above average growth. This tract's actual growth line rises above the average, so it meets this criterion.
+          </p>
         </section>
         <section class="step">
-          This line shows the minimum home value growth required for gentrification, which must be in the top third of growth rates in the city.
+          <h3>Educational Attainment</h3>
+          <p>
+            Educational attainment—measured here as the percentage of residents with at least a four year college degree—provides a good leading indicator of eventual income growth. A gentrifying community will often see an influx of recent college graduates, who have initially lower incomes, but high potential for future earnings.
+          </p>
+          <p>
+            As with median home value, the dashed line represents average ten-year growth in the city. Whatever the starting point, educational attainment growth rates must be above this average.
+          </p>
         </section>
         <section class="step">
-          This tract shows greater growth, so it meets this criterion.
+          <p>
+            We can see here that the example tract meets the requirement for educational attainment growth, the final criterion to consider a tract gentrified.
+          </p>
         </section>
-        <section class="step">
-          Finally, growth in educational attainment (number of four-year degrees) is used as a predictor of future income growth.
-        </section>
-        <section class="step">
-          As with income, educational attainment growth rates must be in the top third percentile in the area.
-        </section>
-        <section class="step">
-          Since educational attainment also comes in above the necessary growth rate, the tract is considered gentrified.
+        <section class="step stepLast">
+          <p>
+            So, because median household income and median home value started on the low end—below the 40th percentile in 2000—and because home value and the percentage of college educated population have risen at above average rates over the ten-year span, this census tract would be considered <b>gentrified</b>.
+          </p>
+          <p>
+            Gentrification is a complex issue, and no simple metric like this can capture the intricacies of an on-the-ground qualitative assessment. But having a formal, quantitative definition can be extremely useful for broad historical analysis.
+          </p>
         </section>
       </div>
       <div id="lineviz">
@@ -53,8 +83,9 @@
     <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
     <script src="https://d3js.org/d3-selection.v1.min.js"></script>
     <script src="https://d3js.org/d3-timer.v1.min.js"></script>
-    <script src="https://d3js.org/d3-transition.v1.min.js"></script> 
+    <script src="https://d3js.org/d3-transition.v1.min.js"></script>
     <script src="js/scroller.js"></script>
     <script src="js/gentrification.js"></script>
+    <script src="js/gentrificationLines.js"></script>
   </body>
 </html>

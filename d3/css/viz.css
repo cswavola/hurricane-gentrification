@@ -11,6 +11,10 @@
 	float:left;
 }
 
+h3 {
+	padding: 0px 0px 0px 0px;
+}
+
 #detail {
 	float: left;
 	margin-top: 100px;
@@ -66,23 +70,32 @@
 }
 
 .step {
+	height: 500px;
+	vertical-align: middle;
+}
+
+.stepFirst {
 	margin-top: 200px;
+}
+
+.stepLast {
+	/*margin-bottom: 100px;*/
 }
 
 
 #lineviz {
 	position: fixed;
 	left: 600px;
-	top: 0px;
+	top: 100px;
 }
 
 path.domain, g.tick line {
 	opacity: 0;
 }
 
-h3 {
+/*h3 {
 	padding-left: 50px;
-}
+}*/
 
 #overlay {
 	height: 800px;
@@ -132,4 +145,39 @@ th, td {
 
 th.colorOffset, td.colorOffset {
 	background-color: #1E0944;
+}
+
+/* HEADER NAVIGATION */
+#header {
+	padding: 0; margin: 0;
+	background-color: #1E0944;
+	color: white;
+	top: 0;
+	height: 50px;
+	vertical-align: middle;
+}
+
+#header h3 {
+	padding: 10px 20px 14px 10px;
+	margin: 0;
+	vertical-align: middle;
+	float: left;
+}
+
+#header #links {
+	float: left;
+}
+
+#header a {
+	display: block;
+	float: left;
+	background-color: #EAE6F2;
+	color: black;
+	height: 100%;
+	padding: 15px;
+}
+
+#header a.active {
+	background-color: #600F97;
+	color: white;
 }

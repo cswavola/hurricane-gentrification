@@ -7,6 +7,7 @@ var gentrificationLines = function() {
 	var g = null;
 
 	var showLegend = false;
+	var scroller = false;
 	var selector = "#detail";
 
 	var figh = height-margin.top-margin.bottom;
@@ -55,6 +56,13 @@ var gentrificationLines = function() {
 		var that = this;
 		if(!arguments.length) return showLegend;
 		showLegend = _;
+		return that;
+	}
+
+	var scroller_ = function(_) {
+		var that = this;
+		if(!arguments.length) return scroller;
+		scroller = _;
 		return that;
 	}
 
@@ -127,26 +135,36 @@ var gentrificationLines = function() {
 		// console.log(tract);
 		d3.select(selector).selectAll("svg").remove();
 
+		var highOpacity = 1,
+			lowOpacity = 0.5;
+
+		if(scroller) {
+			highOpacity = 0;
+			lowOpacity = 0;
+		}
+
 		svg = d3.select(selector).append("svg")
 			.attr("height", height)
 			.attr("width", width+(showLegend*350));
 
 		svg.append("rect")
 			.attr("id", "incThreshRect")
-			.attr("class", "step1")
+			// .attr("class", "step1")
 			.attr("x", x(2000))
 			.attr("y", y(40))
 			.attr("height", y(0)-y(40))
 			.attr("width", x(2010)-x(2000))
 			.attr("fill", "#DDDDDD");
+			// .style("opacity", highOpacity);
 		svg.append("rect")
 			.attr("id", "incThreshRect2")
-			.attr("class", "step1")
+			// .attr("class", "step1")
 			.attr("x", x(2000))
 			.attr("y", y(100))
 			.attr("height", y(40)-y(100))
 			.attr("width", x(2010)-x(2000))
 			.attr("fill", "#EEEEEE");
+			// .style("opacity", highOpacity);
 
 		// svg.append("line")
 		// 	.attr("id", "incThresh")
@@ -162,45 +180,45 @@ var gentrificationLines = function() {
 
 		svg.append("circle")
 			.attr("id", "inc2000")
-			.attr("class", "step2")
+			.attr("class", "income eligible")
 			.attr("cx", x(2000))
 			.attr("cy", y(tract.med_income_00_pctile))
 			.attr("r", pointRad)
 			.style("fill", color("income"))
-			.style("opacity", 1);
+			.style("opacity", highOpacity);
 
 		svg.append("circle")
 			.attr("id", "inc2010")
-			.attr("class", "step3")
+			.attr("class", "income")
 			.attr("cx", x(2010))
 			.attr("cy", y(tract.med_income_10_pctile))
 			.attr("r", pointRad)
 			.style("fill", color("income"))
-			.style("opacity", 1);
+			.style("opacity", highOpacity);
 
 		svg.append("line")
 			.attr("id", "incLine")
-			.attr("class", "step3")
+			.attr("class", "income")
 			.attr("x1", x(2000))
 			.attr("y1", y(tract.med_income_00_pctile))
 			.attr("x2", x(2010))
 			.attr("y2", y(tract.med_income_10_pctile))
 			.style("stroke-width", 3)
 			.style("stroke", color("income"))
-			.style("opacity", 1);
+			.style("opacity", highOpacity);
 
 		svg.append("circle")
 			.attr("id", "hv2000")
-			.attr("class", "step4")
+			.attr("class", "homevalue eligible")
 			.attr("cx", x(2000))
 			.attr("cy", y(tract.med_home_value_00_pctile))
 			.attr("r", pointRad)
 			.style("fill", color("home_value"))
-			.style("opacity", 1);
+			.style("opacity", highOpacity);
 
 		svg.append("line")
 			.attr("id", "hvThresh")
-			.attr("class", "step5")
+			.attr("class", "homevalue homevalueThreshold")
 			.attr("x1", x(2000))
 			.attr("y1", y(tract.med_home_value_00_pctile))
 			.attr("x2", x(2010))
@@ -208,41 +226,41 @@ var gentrificationLines = function() {
 			.style("stroke-width", 3)
 			.style("stroke", color("home_value"))
 			.style("stroke-dasharray", ("3, 3"))
-			.style("opacity", 0.5);
+			.style("opacity", lowOpacity);
 
 		svg.append("circle")
 			.attr("id", "hv2010")
-			.attr("class", "step6")
+			.attr("class", "homevalue")
 			.attr("cx", x(2010))
 			.attr("cy", y(tract.med_home_value_10_pctile))
 			.attr("r", pointRad)
 			.style("fill", color("home_value"))
-			.style("opacity", 1);
+			.style("opacity", highOpacity);
 
 		svg.append("line")
 			.attr("id", "hvLine")
-			.attr("class", "step6")
+			.attr("class", "homevalue")
 			.attr("x1", x(2000))
 			.attr("y1", y(tract.med_home_value_00_pctile))
 			.attr("x2", x(2010))
 			.attr("y2", y(tract.med_home_value_10_pctile))
 			.style("stroke-width", 3)
 			.style("stroke", color("home_value"))
-			.style("opacity", 1);
+			.style("opacity", highOpacity);
 
 
 		svg.append("circle")
 			.attr("id", "college2000")
-			.attr("class", "step7")
+			.attr("class", "collegeThresh")
 			.attr("cx", x(2000))
 			.attr("cy", y(tract.pct_college_00_pctile))
 			.attr("r", pointRad)
 			.style("fill", color("college"))
-			.style("opacity", 1);
+			.style("opacity", highOpacity);
 
 		svg.append("line")
 			.attr("id", "collegeThresh")
-			.attr("class", "step8")
+			.attr("class", "collegeThresh")
 			.attr("x1", x(2000))
 			.attr("y1", y(tract.pct_college_00_pctile))
 			.attr("x2", x(2010))
@@ -250,27 +268,27 @@ var gentrificationLines = function() {
 			.style("stroke-width", 3)
 			.style("stroke", color("college"))
 			.style("stroke-dasharray", ("3, 3"))
-			.style("opacity", 0.5);
+			.style("opacity", lowOpacity);
 
 		svg.append("circle")
 			.attr("id", "college2010")
-			.attr("class", "step9")
+			.attr("class", "college2010")
 			.attr("cx", x(2010))
 			.attr("cy", y(tract.pct_college_10_pctile))
 			.attr("r", pointRad)
 			.style("fill", color("college"))
-			.style("opacity", 1);
+			.style("opacity", highOpacity);
 
 		svg.append("line")
 			.attr("id", "collegeLine")
-			.attr("class", "step9")
+			.attr("class", "college2010")
 			.attr("x1", x(2000))
 			.attr("y1", y(tract.pct_college_00_pctile))
 			.attr("x2", x(2010))
 			.attr("y2", y(tract.pct_college_10_pctile))
 			.style("stroke-width", 3)
 			.style("stroke", color("college"))
-			.style("opacity", 1);
+			.style("opacity", highOpacity);
 
 		svg.append("g")
 			.attr("class", "axis")
@@ -281,7 +299,7 @@ var gentrificationLines = function() {
 			.text("Census Year")
 			.style("text-anchor", "middle")
 			.style("font-weight", "bold")
-			.attr("transform", "translate("+(margin.left+width/2)+", "+(margin.top+figh+margin.bottom*2)+")");
+			.attr("transform", "translate("+(margin.left+width/2.5)+", "+(margin.top+figh+margin.bottom)+")");
 
 
 		svg.append("g")
@@ -298,7 +316,7 @@ var gentrificationLines = function() {
 
 		if(showLegend) {
 			var legend = svg.append("g")
-				.attr("transform", "translate("+(width+7)+", "+(height/3+5)+")");
+				.attr("transform", "translate("+(width+7)+", "+(height/2-50)+")");
 
 			legend.append("rect")
 				.attr("width", 217)
@@ -326,7 +344,145 @@ var gentrificationLines = function() {
 					.style("fill", color(lines[i]));
 			}
 		}
+
+		setupSections();
 	}
+
+	/* SCROLLER THINGS */
+
+	var setupSections = function() {
+		activateFunctions[0] = showStart;
+		activateFunctions[1] = showEligible;
+		activateFunctions[2] = showIncome;
+		activateFunctions[3] = showHVThresh;
+		activateFunctions[4] = showHV2010;
+		activateFunctions[5] = showCollegeThresh;
+		activateFunctions[6] = showCollege2010;
+		activateFunctions[7] = showSummary;
+	};
+
+	function showStart() {
+		svg.selectAll(".eligible")
+			.transition()
+			.duration(500)
+			.style("opacity", 0);
+	}
+
+	function showEligible() {
+		svg.selectAll(".income")
+			.transition()
+			.duration(500)
+			.style("opacity", 0)
+
+		svg.selectAll(".eligible")
+			.transition()
+			.duration(500)
+			.style("opacity", 1);
+	}
+
+	function showIncome() {
+		svg.selectAll(".income")
+			.transition()
+			.duration(500)
+			.style("opacity", 1);
+
+		svg.selectAll(".homevalueThreshold")
+			.transition()
+			.duration(500)
+			.style("opacity", 0);
+	}
+
+	function showHVThresh() {
+		svg.selectAll(".income")
+			.transition()
+			.duration(500)
+			.style("opacity", 0.1);
+
+		svg.selectAll(".homevalue")
+			.transition()
+			.duration(500)
+			.style("opacity", 0);
+
+		svg.selectAll("#hv2000")
+			.transition()
+			.duration(500)
+			.style("opacity", 1);
+
+		svg.selectAll(".homevalueThreshold")
+			.transition()
+			.duration(500)
+			.style("opacity", 1);
+	}
+
+	function showHV2010() {
+		svg.selectAll(".homevalue")
+			.transition()
+			.duration(500)
+			.style("opacity", 1);
+
+		svg.selectAll(".collegeThresh")
+			.transition()
+			.duration(500)
+			.style("opacity", 0);
+	}
+
+	function showCollegeThresh() {
+		svg.selectAll(".homevalue")
+			.transition()
+			.duration(500)
+			.style("opacity", 0.1);
+
+		svg.selectAll(".collegeThresh")
+			.transition()
+			.duration(500)
+			.style("opacity", 1);
+
+		svg.selectAll(".college2010")
+			.transition()
+			.duration(500)
+			.style("opacity", 0);
+	}
+
+	function showCollege2010() {
+		svg.selectAll(".college2010")
+			.transition()
+			.duration(500)
+			.style("opacity", 1);
+
+		svg.selectAll(".income")
+			.transition()
+			.duration(500)
+			.style("opacity", 0.1);
+
+		svg.selectAll(".homevalue")
+			.transition()
+			.duration(500)
+			.style("opacity", 0.1);
+	}
+
+	function showSummary() {
+		svg.selectAll(".income")
+			.transition()
+			.duration(500)
+			.style("opacity", 1);
+
+		svg.selectAll(".homevalue")
+			.transition()
+			.duration(500)
+			.style("opacity", 1);
+	}
+
+
+	var activate_ = function (index) {
+		console.log(activateFunctions);
+	    activeIndex = index;
+	    var sign = (activeIndex - lastIndex) < 0 ? -1 : 1;
+	    var scrolledSections = d3.range(lastIndex + sign, activeIndex + sign, sign);
+	    scrolledSections.forEach(function (i) {
+	      activateFunctions[i]();
+	    });
+	    lastIndex = activeIndex;
+	};
 
 	var public = {
 		"plot": plot_,
@@ -334,7 +490,9 @@ var gentrificationLines = function() {
 		"legend": showLegend_,
 		"selector": selector_,
 		"height": height_,
-		"width": width_
+		"width": width_,
+		"activate": activate_,
+		"scroller": scroller_
 	}
 
 	return public;
