@@ -10,6 +10,19 @@ var radialChart = function() {
 	var gent_statuses = ["ineligible", "eligible", "gentrified"];
 
 	var hoverText = null;
+	var showLegend = true;
+	var scroller = false;
+
+
+	// Keep track of which visualization
+	// we are on and which was the last
+	// index activated. When user scrolls
+	// quickly, we want to call all the
+	// activate functions that they pass.
+	var lastIndex = -1;
+	var activeIndex = 0;
+
+	var activateFunctions = [];
 
 	var selector = "#viz";
 
@@ -49,6 +62,27 @@ var radialChart = function() {
 		var that = this;
 		if(!arguments.length) return selector;
 		selector = _;
+		return that;
+	}
+
+	var scroller_ = function(_) {
+		var that = this;
+		if(!arguments.length) return scroller;
+		scroller = _;
+		return that;
+	}
+
+	var size_ = function(_) {
+		var that = this;
+		if(!arguments.length) return size;
+		size = _;
+		return that;
+	}
+
+	var legend_ = function(_) {
+		var that = this;
+		if(!arguments.length) return showLegend;
+		showLegend = _;
 		return that;
 	}
 
@@ -145,6 +179,7 @@ var radialChart = function() {
 
 
 		gtop.append("circle")
+			.attr("class", "eye")
 			.attr("x", 0)
 			.attr("y", 0)
 			.attr("r", radius-(thickness*(levels+2))+20)
@@ -212,7 +247,7 @@ var radialChart = function() {
 		var g1 = gtop.selectAll(".arc1")
 				.data(l1Pie(l1))
 			.enter().append("g")
-				.attr("class", "arc1 arc");
+				.attr("class", function(d) { return "arc damage1 income"+d.data.income_group; });
 
 		g1.append("path")
 			.attr("d", l1Arc);
@@ -231,15 +266,17 @@ var radialChart = function() {
 				.endAngle(endAngle);
 
 			gtop.append("path")
-				.attr("class", "incomeLabelArc")
+				.attr("class", "arcLabel income"+income_group)
 				.attr("id", "incomeLabelArc"+income_group)
 				.attr("d", labelArc)
 				.style("fill", "white");
 
 			gtop.append("text")
+					.attr("class", "arcLabel income"+income_group)
 					.style("fill", color(income_group))
 					.attr("text-anchor", "middle")
 				.append("textPath")
+					.attr("class", "arcLabel income"+income_group)
 					.attr("xlink:href", "#incomeLabelArc"+income_group)
 					.attr("startOffset", "25%")
 					.text(prettyIncomeText(income_group));
@@ -267,22 +304,24 @@ var radialChart = function() {
 				.endAngle(endAngle);
 
 			gtop.append("path")
-				.attr("class", "damageLabelBGArc")
+				.attr("class", "arcLabel damage"+damage_level)
 				.attr("id", "damageLabelBGArc"+damage_level)
 				.attr("d", labelBGArc)
 				.style("fill", "#555555");
 
 			gtop.append("path")
-				.attr("class", "damageLabelArc")
+				.attr("class", "arcLabel damage"+damage_level)
 				.attr("id", "damageLabelArc"+damage_level)
 				.attr("d", labelArc)
 				.style("fill", "none");
 
 			gtop.append("text")
+					.attr("class", "arcLabel damage"+damage_level)
 					.attr("text-anchor", "middle")
 					.style("font-weight", "bold")
 					.style("fill", "#EEEEEE")
 				.append("textPath")
+					.attr("class", "arcLabel damage"+damage_level)
 					.attr("xlink:href", "#damageLabelArc"+damage_level)
 					.attr("startOffset", "22%")
 					.attr("alignment-baseline", "text-before-edge")
@@ -317,7 +356,7 @@ var radialChart = function() {
 			var gCur = gtop.selectAll(".arc"+damage_level+income_group)
 					.data(lCurPie(lCur))
 				.enter().append("g")
-					.attr("class", "arc arc"+damage_level+income_group);
+					.attr("class", "arc damage"+damage_level+" income"+income_group);
 
 			gCur.append("path")
 				.attr("d", lCurArc);
@@ -352,7 +391,9 @@ var radialChart = function() {
 			.style("stroke-opacity", 1)
 			.on("mouseover", function(d) {
 				updateText(d);
-				d3.select(this).style("cursor", "pointer");
+				if(!scroller) {
+					d3.select(this).style("cursor", "pointer");
+				}
 				console.log(d.data.abandoned);
 			})
 			.on("mouseout", function(d) {
@@ -360,40 +401,104 @@ var radialChart = function() {
 				d3.select(this).style("cursor", "default");
 			});
 
-
-		var legend = svg.append("g")
-				// .attr("transform", "translate(0,"+(size-3*margin)+")");
-				.attr("transform", "translate(10, 550)");
-
-		legend.append("text")
-			.text("Chart Key")
-			.style("font-weight", "bold");
-
-		var lBoxSize = 25;
-		var lBoxTopPad = 5
-		for(var i = 0; i < gent_statuses.length; i++) {
-			lBoxY = lBoxTopPad+i*(lBoxSize+5);
-			
-			for(var j = 0; j < income_groups.length; j++) {
-				lBoxX = j*lBoxSize;
-
-				legend.append("rect")
-					.attr("x", lBoxX)
-					.attr("y", lBoxY)
-					.attr("width", lBoxSize)
-					.attr("height", lBoxSize)
-					.style("fill", color(income_groups[j]))
-					.style("opacity", opacity(gent_statuses[i]));
-			}
+		if(showLegend) {
+			var legend = svg.append("g")
+					// .attr("transform", "translate(0,"+(size-3*margin)+")");
+					.attr("transform", "translate(10, 550)");
 
 			legend.append("text")
-				.text(prettyGentrificationText(gent_statuses[i]))
-				.attr("x", lBoxSize*3+5)
-				.attr("y", lBoxY+lBoxSize-7);
+				.text("Chart Key")
+				.style("font-weight", "bold");
 
-			// console.log(gent_statuses[i]);
+			var lBoxSize = 25;
+			var lBoxTopPad = 5
+			for(var i = 0; i < gent_statuses.length; i++) {
+				lBoxY = lBoxTopPad+i*(lBoxSize+5);
+				
+				for(var j = 0; j < income_groups.length; j++) {
+					lBoxX = j*lBoxSize;
+
+					legend.append("rect")
+						.attr("x", lBoxX)
+						.attr("y", lBoxY)
+						.attr("width", lBoxSize)
+						.attr("height", lBoxSize)
+						.style("fill", color(income_groups[j]))
+						.style("opacity", opacity(gent_statuses[i]));
+				}
+
+				legend.append("text")
+					.text(prettyGentrificationText(gent_statuses[i]))
+					.attr("x", lBoxSize*3+5)
+					.attr("y", lBoxY+lBoxSize-7);
+
+				// console.log(gent_statuses[i]);
+			}
+		}
+
+		if(scroller) {
+			d3.selectAll(".income1, .income2, .income3, .arcLabel, .eye")
+				.style("display", "none");
+			setupSections();
 		}
 	}
+
+	var setupSections = function() {
+		activateFunctions[0] = showStart;
+		activateFunctions[1] = showEye;
+		activateFunctions[2] = showIncome1Damage1;
+		activateFunctions[3] = showIncome1Remaining;
+		activateFunctions[4] = showIncome2Income3;
+		activateFunctions[5] = showSummary;
+	}
+
+	function showStart() {
+		d3.selectAll(".eye")
+			.style("display", "none");
+	}
+
+	function showEye() {
+		d3.selectAll(".income1.damage1,.income1.arcLabel,.damage1.arcLabel")
+			.style("display", "none");
+
+		d3.selectAll(".eye")
+			.transition(500)
+			.style("display", "inline");
+	}
+
+	function showIncome1Damage1() {
+		d3.selectAll(".income1.damage2,.income1.damage3,.arcLabel.damage2,.arcLabel.damage3")
+			.style("display", "none");
+		d3.selectAll(".income1.damage1,.income1.arcLabel,.damage1.arcLabel")
+			.style("display", "inline");
+	}
+
+	function showIncome1Remaining() {
+		d3.selectAll(".income2,.income3")
+			.style("display", "none");
+		d3.selectAll(".income1.damage2,.income1.damage3,.arcLabel.damage2,.arcLabel.damage3")
+			.style("display", "inline");
+	}
+
+	function showIncome2Income3() {
+		d3.selectAll(".income2,.income3")
+			.style("display", "inline");
+	}
+
+	function showSummary() {
+
+	}
+
+	var activate_ = function (index) {
+		console.log(activateFunctions);
+	    activeIndex = index;
+	    var sign = (activeIndex - lastIndex) < 0 ? -1 : 1;
+	    var scrolledSections = d3.range(lastIndex + sign, activeIndex + sign, sign);
+	    scrolledSections.forEach(function (i) {
+	      activateFunctions[i]();
+	    });
+	    lastIndex = activeIndex;
+	};
 
 	var callback_ = function(cbfunc) {
 		d3.selectAll(".arc")
@@ -403,7 +508,11 @@ var radialChart = function() {
 	public = {
 		"plot": plot_,
 		"callback": callback_,
-		"selector": selector_
+		"selector": selector_,
+		"size": size_,
+		"legend": legend_,
+		"activate": activate_,
+		"scroller": scroller_
 	}
 
 	return public;

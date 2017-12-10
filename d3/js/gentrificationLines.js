@@ -30,9 +30,10 @@ var gentrificationLines = function() {
 	var activateFunctions = [];
 
 
-	var x = d3.scaleOrdinal()
+	var x = d3.scalePoint()
 		.range([margin.left, margin.left+figw])
-		.domain([2000, 2010]);
+		.domain([2000, 2010])
+		.padding(0.2);
 	var y = d3.scaleLinear()
 		.range([margin.top+figh, margin.top])
 		.domain([0, 100]);
@@ -150,19 +151,19 @@ var gentrificationLines = function() {
 		svg.append("rect")
 			.attr("id", "incThreshRect")
 			// .attr("class", "step1")
-			.attr("x", x(2000))
+			.attr("x", margin.left)
 			.attr("y", y(40))
 			.attr("height", y(0)-y(40))
-			.attr("width", x(2010)-x(2000))
+			.attr("width", figw)
 			.attr("fill", "#DDDDDD");
 			// .style("opacity", highOpacity);
 		svg.append("rect")
 			.attr("id", "incThreshRect2")
 			// .attr("class", "step1")
-			.attr("x", x(2000))
+			.attr("x", margin.left)
 			.attr("y", y(100))
 			.attr("height", y(40)-y(100))
-			.attr("width", x(2010)-x(2000))
+			.attr("width", figw)
 			.attr("fill", "#EEEEEE");
 			// .style("opacity", highOpacity);
 
@@ -345,7 +346,9 @@ var gentrificationLines = function() {
 			}
 		}
 
-		setupSections();
+		if(scroller) {
+			setupSections();
+		}
 	}
 
 	/* SCROLLER THINGS */
