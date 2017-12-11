@@ -260,13 +260,13 @@ var radialChart = function() {
 
 		var l1 = tracts.filter(function(d) { return d.damage_level == 1; });
 
-		var g1 = gtop.selectAll(".arc1")
-				.data(l1Pie(l1))
-			.enter().append("g")
-				.attr("class", function(d) { return "arc damage1 income"+d.data.income_group; });
+		// var g1 = gtop.selectAll(".arc1")
+		// 		.data(l1Pie(l1))
+		// 	.enter().append("g")
+		// 		.attr("class", function(d) { return "arc damage1 income"+d.data.income_group; });
 
-		g1.append("path")
-			.attr("d", l1Arc);
+		// g1.append("path")
+		// 	.attr("d", l1Arc);
 			// .on("mouseover", updateText)
 			// .on("mouseout", function(d) { hoverText.style("display", "none"); })
 			// .on("click", displayGentLines);
@@ -357,7 +357,6 @@ var radialChart = function() {
 					.text(prettyDamageText(damage_level));
 		}
 
-		var damageLabelArc = damage_levels.forEach(function(d) { drawDamageLabelArc(d); })
 
 		var drawArc = function(damage_level, income_group) {
 			var startAngle = getStartAngle(l1Pie(l1).filter(function(d) { return d.data.income_group == income_group; }));
@@ -403,7 +402,7 @@ var radialChart = function() {
 		}
 
 		var rings = damage_levels
-			.filter(function(d) { return d > 1; })
+			// .filter(function(d) { return d > 1; })
 			.forEach(drawRing);
 
 		d3.selectAll(".arc")
@@ -504,6 +503,9 @@ var radialChart = function() {
 
 			// 	// console.log(gent_statuses[i]);
 		}
+
+		
+		var damageLabelArc = damage_levels.forEach(function(d) { drawDamageLabelArc(d); })
 
 		if(scroller) {
 			d3.selectAll(".arc")

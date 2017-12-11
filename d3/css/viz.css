@@ -36,6 +36,12 @@ h3 {
 	padding: 10px;
 }
 
+#detail #topLeft #status #why {
+	font-weight: bold;
+	font-size: 18px;
+	color: #1E0944;
+}
+
 #detail #map {
 	/*position: fixed;*/
 	position: relative;
