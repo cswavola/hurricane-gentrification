@@ -296,6 +296,19 @@ var radialChart = function() {
 					.attr("xlink:href", "#incomeLabelArc"+income_group)
 					.attr("startOffset", "25%")
 					.text(prettyIncomeText(income_group));
+
+
+			var highlightArc = d3.arc()
+				.outerRadius(radius-((thickness+level_gap)*(levels)-level_gap+3))
+				.innerRadius(radius-((thickness+level_gap)*(levels)))
+				.startAngle(startAngle)
+				.endAngle(endAngle);
+
+			gtop.append("path")
+				.attr("class", "arcLabel income"+income_group)
+				.attr("id", "incomeLabelArc"+income_group)
+				.attr("d", highlightArc)
+				.style("fill", color(income_group));
 		}
 
 		var incomeLabelArc = income_groups.forEach(function(d) { drawIncomeLabelArc(d); });
@@ -493,8 +506,15 @@ var radialChart = function() {
 		}
 
 		if(scroller) {
-			d3.selectAll(".income1, .income2, .income3, .arcLabel, .eye")
+			d3.selectAll(".arc")
 				.style("display", "none");
+			toggle_(".arc", action="hide", duration=0);
+			d3.selectAll(".arc")
+				.style("display", "inline");
+
+			d3.selectAll(".arcLabel, .eye")
+				.style("opacity", 0);
+
 			setupSections();
 		}
 	}
@@ -509,36 +529,32 @@ var radialChart = function() {
 	}
 
 	function showStart() {
-		d3.selectAll(".eye")
-			.style("display", "none");
+		d3.selectAll(".arcLabel, .eye")
+			.transition(500)
+			.style("opacity", 0);
 	}
 
 	function showEye() {
-		d3.selectAll(".income1.damage1,.income1.arcLabel,.damage1.arcLabel")
-			.style("display", "none");
+		toggle_(".income1.damage1,.income1.arcLabel,.damage1.arcLabel", action="hide");
+		// 	.style("display", "none");
 
-		d3.selectAll(".eye")
+		d3.selectAll(".eye, .arcLabel")
 			.transition(500)
-			.style("display", "inline");
+			.style("opacity", 1);
 	}
 
 	function showIncome1Damage1() {
-		d3.selectAll(".income1.damage2,.income1.damage3,.arcLabel.damage2,.arcLabel.damage3")
-			.style("display", "none");
-		d3.selectAll(".income1.damage1,.income1.arcLabel,.damage1.arcLabel")
-			.style("display", "inline");
+		toggle_(".income1.damage2,.income1.damage3", "hide");
+		toggle_(".income1.damage1", "show");
 	}
 
 	function showIncome1Remaining() {
-		d3.selectAll(".income2,.income3")
-			.style("display", "none");
-		d3.selectAll(".income1.damage2,.income1.damage3,.arcLabel.damage2,.arcLabel.damage3")
-			.style("display", "inline");
+		toggle_(".income2,.income3", "hide");
+		toggle_(".income1.damage2,.income1.damage3", "show");
 	}
 
 	function showIncome2Income3() {
-		d3.selectAll(".income2,.income3")
-			.style("display", "inline");
+		toggle_(".income2,.income3", "show");
 	}
 
 	function showSummary() {
@@ -561,6 +577,48 @@ var radialChart = function() {
 			.on("click", cbfunc);
 	}
 
+
+
+	/* TWEEN TEST */
+	function arcTween(action) {
+		return function(d) {
+			// d.data.oldStart = d.startAngle;
+			// d.data.oldEnd = d.endAngle;
+			if(action == "toggle" || (action == "show" && d.data.nextStart != 0 && d.data.nextEnd != 0) || (action == "hide" && d.data.nextStart == 0 && d.data.nextEnd == 0)) {
+				var newStart = d.data.nextStart;
+				var newEnd = d.data.nextEnd;
+				d.data.nextStart = d.startAngle;
+				d.data.nextEnd = d.endAngle;
+
+				var interpolateStart = d3.interpolate(d.startAngle, newStart);
+				var interpolateEnd = d3.interpolate(d.endAngle, newEnd);
+
+				return function(t) {
+					d.startAngle = interpolateStart(t);
+					d.endAngle = interpolateEnd(t);
+					console.log(l1Arc(d));
+
+					// return l1Arc(d);
+					var newArc = d3.arc()
+						.outerRadius(radius - ((levels-d.data.damage_level)*(thickness+level_gap)))
+						.innerRadius(radius - ((levels-d.data.damage_level)*(thickness+level_gap)) - thickness)
+
+					return newArc(d);
+				};
+			}
+		};
+	}
+
+	function toggle_(selector, action="toggle", duration=750) {
+		console.log("Hiding");
+		d3.selectAll(selector).selectAll("path")
+			.transition()
+			.duration(duration)
+			.attrTween("d", arcTween(action));
+			// .attr("opacity", 0);
+	}
+
+
 	public = {
 		"plot": plot_,
 		"callback": callback_,
@@ -568,7 +626,8 @@ var radialChart = function() {
 		"size": size_,
 		"legend": legend_,
 		"activate": activate_,
-		"scroller": scroller_
+		"scroller": scroller_,
+		"toggle": toggle_
 	}
 
 	return public;

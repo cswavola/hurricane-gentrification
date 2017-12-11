@@ -39,6 +39,9 @@ var rowConverter = function(d) {
 
 	d.pct_damage = parseFloat(d.pct_damage);
 
+	d.nextStart = 0;
+	d.nextEnd = 0;
+
 	if(d.population_10/d.population_00 <= 0.5) {
 		d.abandoned = true;
 	} else {
