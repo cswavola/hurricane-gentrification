@@ -384,7 +384,8 @@ var radialChart = function() {
 			var gCur = gtop.selectAll(".arc"+damage_level+income_group)
 					.data(lCurPie(lCur))
 				.enter().append("g")
-					.attr("class", "arc damage"+damage_level+" income"+income_group);
+					.attr("class", "arc damage"+damage_level+" income"+income_group)
+					.attr("id", function(d) { return "arc"+d.data.tract_id; });
 
 			gCur.append("path")
 				.attr("d", lCurArc);

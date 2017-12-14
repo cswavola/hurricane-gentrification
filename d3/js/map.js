@@ -23,6 +23,9 @@ var nola_map = function() {
 				.attr("stroke", stroke)
 				.attr("stroke-width", 2)
 				.attr("fill", fill);
+				// .on("click", function(d) {
+				// 	displayDetails(d3.select("#arc"+d.properties.GEOID).data()[0]);
+				// });
 				// .on("click", function(d) { highlight_(d.properties.GEOID); });
 
 		svg.append("polygon")
