@@ -8,6 +8,7 @@ var gentrificationLines = function() {
 
 	var showLegend = false;
 	var scroller = false;
+	var annotate = false;
 	var selector = "#detail";
 
 	var figh = height-margin.top-margin.bottom;
@@ -64,6 +65,13 @@ var gentrificationLines = function() {
 		var that = this;
 		if(!arguments.length) return scroller;
 		scroller = _;
+		return that;
+	}
+
+	var annotate_ = function(_) {
+		var that = this;
+		if(!arguments.length) return annotate;
+		annotate = _;
 		return that;
 	}
 
@@ -312,12 +320,122 @@ var gentrificationLines = function() {
 			.text("Percentile")
 			.style("text-anchor", "middle")
 			.style("font-weight", "bold")
-			.attr("transform", "translate(10, "+(height/2+margin.top)+"), rotate(-90)")
-			.attr("trans");
+			.attr("transform", "translate(10, "+(height/2+margin.top)+"), rotate(-90)");
+
+		if(annotate) {
+			var rdx = 40;
+			var ldx = -10
+			var bdy = 10;
+			var tdy = -30
+
+			var annotationX = 400;
+			var type = d3.annotationLabel;
+			var annotations = [];
+			if(!tract.gent_eligible) {
+				if(tract.med_income_00_pctile > 40) {
+					annotations.push({
+						note: {
+							label: "High median income",
+							wrap: 50
+						},
+						x: x(2000),
+						y: y(tract.med_income_00_pctile),
+						dx: ldx, dy: bdy,
+						subject: { radius: 10, radiusPadding: 0}
+					});
+				}
+
+				if(tract.med_home_value_00_pctile > 40) {
+					annotations.push({
+						note: {
+							label: "High median home value",
+							wrap: 50
+						},
+						x: x(2000),
+						y: y(tract.med_home_value_00_pctile),
+						dx: ldx, dy: bdy,
+						subject: { radius: 10, radiusPadding: 0}
+					});
+				}
+			} else {
+				annotations.push({
+					note: {
+						label: "Low median income",
+						wrap: 50
+					},
+					x: x(2000),
+					y: y(tract.med_income_00_pctile),
+						dx: rdx, dy: tdy,
+					subject: { radius: 10, radiusPadding: 0}
+				});
+				annotations.push({
+					note: {
+						label: "Low median home value",
+						wrap: 50
+					},
+					x: x(2000),
+					y: y(tract.med_home_value_00_pctile),
+					dx: rdx, dy: tdy,
+					subject: { radius: 10, radiusPadding: 0}
+				});
+
+				if(tract.gentrified) {
+					annotations.push({
+						note: {
+							label: "Above-average home value growth",
+							wrap: 50
+						},
+						x: x(2010),
+						y: y(tract.med_home_value_10_pctile),
+						dx: ldx, dy: tdy,
+						subject: { radius: 10, radiusPadding: 0}
+					});
+					annotations.push({
+						note: {
+							label: "Above-average educational growth",
+							wrap: 50
+						},
+						x: x(2010),
+						y: y(tract.pct_college_10_pctile),
+						dx: ldx, dy: tdy,
+						subject: { radius: 10, radiusPadding: 0}
+					});
+				} else {
+					annotations.push({
+						note: {
+							label: "Below-average home value growth",
+							wrap: 50
+						},
+						x: x(2010),
+						y: y(tract.med_home_value_10_pctile),
+						dx: ldx, dy: tdy,
+						subject: { radius: 10, radiusPadding: 0}
+					});
+					annotations.push({
+						note: {
+							label: "Below-average educational growth",
+							wrap: 50
+						},
+						x: x(2010),
+						y: y(tract.pct_college_10_pctile),
+						dx: ldx, dy: tdy,
+						subject: { radius: 10, radiusPadding: 0}
+					});
+				}
+			}
+
+			var makeAnnotations = d3.annotation()
+				.annotations(annotations)
+				.type(type);
+
+			svg.append("g")
+				.attr("class", "annotation-group")
+				.call(makeAnnotations);
+		}
 
 		if(showLegend) {
 			var legend = svg.append("g")
-				.attr("transform", "translate("+(width+7)+", "+(height/2-50)+")");
+				.attr("transform", "translate("+(width+7)+", "+(21)+")");
 
 			legend.append("rect")
 				.attr("width", 217)
@@ -495,7 +613,8 @@ var gentrificationLines = function() {
 		"height": height_,
 		"width": width_,
 		"activate": activate_,
-		"scroller": scroller_
+		"scroller": scroller_,
+		"annotate": annotate_
 	}
 
 	return public;

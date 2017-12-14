@@ -1,7 +1,8 @@
 var displayDetails = function(d) {
+	console.log(d);
 	hideGentChart();
 	d3.select("#viz").selectAll("path").style("stroke", "none");
-	d3.select(this).select("path").style("stroke", "black");
+	d3.select("#arc"+d.data.tract_id).select("path").style("stroke", "black");
 
 	d3.select("#tractID").select("span").html(d.data.tract_id);
 	d3.select("#status").select("span").html(gentrificationStatusText(d.data.gent_status));
@@ -15,7 +16,7 @@ var displayDetails = function(d) {
 	var gentLines = gentrificationLines();
 	gentLines.height(380);
 	gentLines.selector("#gentrification");
-	gentLines.tract(d.data).legend(true);
+	gentLines.tract(d.data).legend(true).annotate(true);
 	gentLines.plot();
 
 	d3.selectAll(".detailAnnotations")
@@ -149,5 +150,5 @@ d3.queue()
 	});
 
 	var detail = d3.select("#detail");
-	console.log(window.innerWidth);
+	// console.log(window.innerWidth);
 });

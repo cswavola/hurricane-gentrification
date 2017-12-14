@@ -384,7 +384,8 @@ var radialChart = function() {
 			var gCur = gtop.selectAll(".arc"+damage_level+income_group)
 					.data(lCurPie(lCur))
 				.enter().append("g")
-					.attr("class", "arc damage"+damage_level+" income"+income_group);
+					.attr("class", "arc damage"+damage_level+" income"+income_group)
+					.attr("id", function(d) { return "arc"+d.data.tract_id; });
 
 			gCur.append("path")
 				.attr("d", lCurArc);
@@ -407,20 +408,20 @@ var radialChart = function() {
 
 		d3.selectAll(".arc")
 			.style("fill", function(d) {
-				if(d.data.abandoned) {
-					return "#777777";
-				} else {
-					return color(d.data.income_group);
-				}
+				// if(d.data.abandoned) {
+				// 	return "#777777";
+				// } else {
+				// 	return color(d.data.income_group);
+				// }
 				return color(d.data.income_group);
 				// return "url(#diagonalHatch)";
 			})
 			.style("fill-opacity", function(d) {
-				if(d.data.abandoned) {
-					return 1;
-				} else {
+				// if(d.data.abandoned) {
+				// 	return 1;
+				// } else {
 					return opacity(d.data.gent_status);
-				}
+				// }
 			})
 			.style("stroke-opacity", 1)
 			.on("mouseover", function(d) {

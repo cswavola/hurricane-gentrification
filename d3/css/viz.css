@@ -70,18 +70,19 @@ h3 {
 }
 
 #sections {
-	width: 500px;
+	width: 550px;
 	margin-bottom: 500px;
 	margin-left: 20px;
 }
 
 .step {
-	height: 500px;
+	height: 450px;
+	padding-left: 75px;
 	vertical-align: middle;
 }
 
 .stepFirst {
-	margin-top: 200px;
+	margin-top: 100px;
 }
 
 .stepLast {
@@ -186,4 +187,11 @@ th.colorOffset, td.colorOffset {
 #header a.active {
 	background-color: #600F97;
 	color: white;
+}
+
+.annotation-note-label {
+	fill: black;
+	text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+	font-size: 11px;
+	text-anchor: middle;
 }
