@@ -195,3 +195,19 @@ th.colorOffset, td.colorOffset {
 	font-size: 11px;
 	text-anchor: middle;
 }
+
+#content {
+	padding: 50px;
+	width: 600px;
+	float: left;
+}
+
+#sidebar {
+	padding: 50px;
+	width: 400px;
+	float: left;
+}
+
+#sidebar img {
+	width: 200px;
+}
